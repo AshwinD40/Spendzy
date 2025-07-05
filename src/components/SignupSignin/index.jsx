@@ -141,25 +141,29 @@ function SignupSignin() {
     try{
       toast.loading("Google Authenticating...")
       
-      if(isMobile){
-        try{
-          await signInWithRedirect(auth , provider);
-        } catch(redirectError){
-          console.log("Redirect Error:", redirectError);
-          toast.error("Google redirect failed.")
+      let result;
+
+      try{
+        result = await signInWithPopup(auth, provider);
+
+      } catch(popupError){
+        console.warn("Popup fialed, trying redirect...")
+
+
+        if(isMobile){
+          await signInWithRedirect(auth, provider);
+          return;
+        } else{
+          throw popupError
         }
-        return ;
       }
 
-      const result = await signInWithPopup(auth, provider);
-      const credential = GoogleAuthProvider.credentialFromResult(result);
-      const token = credential.accessToken;
-      const user = result.user;
-
-      console.log("user>>>>>>>>", user)
-      toast.success("User authenticated!");
-      createDoc(user)
-      navigate("/dashboard")
+      if(result && result.user){
+        const user = result.user;
+        await createDoc(user)
+        toast.success("User authenticated!")
+        navigate("/dashboard")
+      }
 
     } catch(error){
       console.error(error)
