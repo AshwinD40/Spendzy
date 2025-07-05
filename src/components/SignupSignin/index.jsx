@@ -9,6 +9,7 @@ import {
   signInWithPopup,
   signInWithRedirect, 
   getRedirectResult, 
+  onAuthStateChanged,
   GoogleAuthProvider
 } from "firebase/auth";
 import { auth, db, provider } from '../../firebase'
@@ -182,7 +183,12 @@ function SignupSignin() {
           console.log("Redicted User >>>"  , user)
           toast.success("User authenticated (redirect)!");
           createDoc(user)
-          navigate("/dashboard")
+
+          onAuthStateChanged(auth, (restoredUser) => {
+            if(restoredUser){
+              navigate("/dashboard")
+            }
+          });
         }
       })
       .catch((error) => {
