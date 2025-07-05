@@ -148,10 +148,10 @@ function TransactionTable({ transactions, addTransaction }) {
             <span className= "radio-btn">No Sort</span>
           </Radio>
           <Radio value="date">
-            <span className={sortKey === 'date' ? 'radio-btn active' : 'radio-btn'}>Sort by Date</span>
+            <span className={sortKey === 'date' ? 'radio-btn active' : 'radio-btn'}>By Date</span>
           </Radio>
           <Radio value="amount">
-            <span className={sortKey === 'amount' ? 'radio-btn active' : 'radio-btn'}>Sort by Amount</span>
+            <span className={sortKey === 'amount' ? 'radio-btn active' : 'radio-btn'}>By Amount</span>
           </Radio>
         </Radio.Group>
         <div className='export-import'>
