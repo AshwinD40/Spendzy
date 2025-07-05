@@ -132,6 +132,7 @@ function SignupSignin() {
   }
   
   const isMobile = /Mobi|Android|iPhone/i.test(navigator.userAgent);
+
   async function googleAuth(e) {
     e.preventDefault();
     setLoading(true);
@@ -143,8 +144,9 @@ function SignupSignin() {
 
       if(isMobile){
         await signInWithRedirect(auth, provider);
+        return ;
       } else {
-        await signInWithPopup(auth, provider);
+        result =  await signInWithPopup(auth, provider);
       }
 
       if (result){
@@ -186,7 +188,7 @@ function SignupSignin() {
       .catch((error) => {
         console.error("Redirect error", error)
       })
-  })
+  },[])
 
   return (
     <>
