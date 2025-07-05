@@ -146,7 +146,7 @@ function SignupSignin() {
         await signInWithRedirect(auth, provider);
         return ;
       } else {
-        result =  await signInWithPopup(auth, provider);
+        result = await signInWithPopup(auth, provider);
       }
 
       if (result){
