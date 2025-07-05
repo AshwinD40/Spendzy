@@ -141,26 +141,25 @@ function SignupSignin() {
     try{
       toast.loading("Google Authenticating...")
       
-      let result;
-
       if(isMobile){
-        await signInWithRedirect(auth, provider);
+        try{
+          await signInWithRedirect(auth , provider);
+        } catch(redirectError){
+          console.log("Redirect Error:", redirectError);
+          toast.error("Google redirect failed.")
+        }
         return ;
-      } else {
-        result = await signInWithPopup(auth, provider);
       }
 
-      if (result){
-        const credential = GoogleAuthProvider.credentialFromResult(result);
-        const token = credential.accessToken;
-        const user = result.user;
+      const result = await signInWithPopup(auth, provider);
+      const credential = GoogleAuthProvider.credentialFromResult(result);
+      const token = credential.accessToken;
+      const user = result.user;
 
-        console.log("user>>>>>>>>", user)
-        toast.success("User authenticated!");
-        createDoc(user)
-        navigate("/dashboard")
-
-      }
+      console.log("user>>>>>>>>", user)
+      toast.success("User authenticated!");
+      createDoc(user)
+      navigate("/dashboard")
 
     } catch(error){
       console.error(error)
@@ -177,8 +176,8 @@ function SignupSignin() {
 
   useEffect(() => {
     getRedirectResult(auth)
-      .then((result) => {
-        if(result){
+      .then( async (result) => {
+        if(result && result.user){
           const user = result.user;
           console.log("Redicted User >>>"  , user)
           toast.success("User authenticated (redirect)!");
