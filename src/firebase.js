@@ -9,7 +9,7 @@ import { getFirestore, doc, setDoc } from "firebase/firestore";
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
   apiKey: "AIzaSyAb3O0BHBA49-19rWqYwRwnhziIiya2Eig",
-  authDomain: "spendzy.vercel.com",
+  authDomain: "spendzy.vercel.app",
   projectId: "spendzy-97125",
   storageBucket: "spendzy-97125.firebasestorage.app",
   messagingSenderId: "155582038704",
