@@ -1,0 +1,18 @@
+.wrapper{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100vw;
+  height: 90vh;
+}
+
+.deshboard{
+  display: flex;
+  flex-direction: column;
+  background-color: rgb(158, 158, 157);
+  width: 100vw;
+  height:fit-content;
+  min-height: 100vh;
+
+}
+
