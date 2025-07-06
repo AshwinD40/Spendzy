@@ -7,16 +7,11 @@ import {
   createUserWithEmailAndPassword, 
   signInWithEmailAndPassword , 
   signInWithPopup,
-  signInWithRedirect, 
-  getRedirectResult, 
-  onAuthStateChanged,
-  GoogleAuthProvider
 } from "firebase/auth";
 import { auth, db, provider } from '../../firebase'
 import { doc, getDoc, setDoc } from "firebase/firestore"; 
 import { useNavigate } from 'react-router-dom';
 import { FcGoogle } from "react-icons/fc";
-import { useEffect } from 'react';
 function SignupSignin() {
 
   const [name, setName] = useState("");
@@ -132,72 +127,28 @@ function SignupSignin() {
     
   }
   
-  const isMobile = /Mobi|Android|iPhone/i.test(navigator.userAgent);
-
   async function googleAuth(e) {
     e.preventDefault();
     setLoading(true);
+    try {
+      toast.loading(" GoogleAuthenticating...");
 
-    try{
-      toast.loading("Google Authenticating...")
-      
-      let result;
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+      await createUserDocument(user);
+      toast.success("User Authenticated Successfully!");
+      navigate("/dashboard");
 
-      try{
-        result = await signInWithPopup(auth, provider);
-
-      } catch(popupError){
-        console.warn("Popup fialed, trying redirect...")
-
-
-        if(isMobile){
-          await signInWithRedirect(auth, provider);
-          return;
-        } else{
-          throw popupError
-        }
-      }
-
-      if(result && result.user){
-        const user = result.user;
-        await createDoc(user)
-        toast.success("User authenticated!")
-        navigate("/dashboard")
-      }
-
-    } catch(error){
-      console.error(error)
-      toast.error("Error authenticating with Google");
-      const errorCode = error.code;
-      const errorMessage = error.message;
-
+    } catch (error) {
+      toast.error(error.message);
+      console.error("Error signing in with Google: ", error.message);
     } finally{
-      toast.dismiss();
       setLoading(false);
+      toast.dismiss();
     }
     
   }
 
-  useEffect(() => {
-    getRedirectResult(auth)
-      .then( async (result) => {
-        if(result && result.user){
-          const user = result.user;
-          console.log("Redicted User >>>"  , user)
-          toast.success("User authenticated (redirect)!");
-          createDoc(user)
-
-          onAuthStateChanged(auth, (restoredUser) => {
-            if(restoredUser){
-              navigate("/dashboard")
-            }
-          });
-        }
-      })
-      .catch((error) => {
-        console.error("Redirect error", error)
-      })
-  },[])
 
   return (
     <>
