@@ -1,24 +1,52 @@
-/* ===============================
-   CHARTS WRAPPER
-=============================== */
 .charts-wrapper {
-  max-width:90%;
-  overflow-x: auto;
-  margin: 2rem auto;
-  padding: 1rem;
-  border-radius: 12px;
-  background-color: #fff;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
   display: flex;
-  justify-content: center;
-  align-items: center;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 2rem;
+  width: 90vw;
+  margin:0 auto 2rem;
 }
 
-/* Optional: Chart Title Style */
-.chart-title {
+.line-chart,
+.pie-chart {
+  flex: 1 1 45%;
+  background: white;
+  padding: 1rem;
+  border-radius: 12px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  min-width: 300px;
+}
+
+.line-chart h2,
+.pie-chart h2 {
   font-size: 1.5rem;
-  font-weight: 600;
   margin-bottom: 1rem;
   text-align: center;
-  color: #333;
+}
+.charts-unavailable-message {
+  display: none; /* hidden by default */
+}
+
+
+/* Wrap charts on screens smaller than 1024px */
+@media screen and (max-width: 1024px) {
+  .charts-wrapper {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+/* Optional: hide on small screens */
+@media screen and (max-width: 768px) {
+  .charts-wrapper {
+    display: none;
+  }
+  .charts-unavailable-message {
+    width: 90vw;
+    display: block;
+    text-align: center;
+    margin: 0.5rem auto;
+    font-size: 1rem;
+    color: #666;
+  }
 }

@@ -140,27 +140,60 @@
 }
 
 .export-import .btn {
-  padding: 6px 14px;
-  background-color: #1890ff;
-  color: white;
+  padding: 8px 14px;
+  background-color: #02b817;
+  color: rgb(248, 248, 250);
   border: none;
-  border-radius: 6px;
+  border-radius: 20px;
   cursor: pointer;
-  font-weight: 500;
+  font-weight:bold;
   min-width: 120px;
   text-align: center;
   white-space: nowrap;
 }
 
 .export-import .btn:hover {
-  background-color: #40a9ff;
+  background-color: #016d0a;
 }
 
 /* ===============================
    TABLE STYLING
 =============================== */
 .transaction-table-wrapper {
-  margin-top: 1rem;
+  background-color: #fff;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  max-width: 98%;
+  margin: 1rem auto;
+  overflow-x: auto;
+}
+
+/* Table row hover */
+.transaction-row:hover {
+  background-color: #f9fafb !important;
+}
+
+/* Customize table headers */
+.transaction-table-wrapper .ant-table-thead > tr > th {
+  background-color: #f1f5f9;
+  font-weight: 600;
+  color: #334155;
+  text-transform: uppercase;
+  font-size: 13px;
+  padding: 10px;
+}
+/* Row cells */
+.transaction-table-wrapper .ant-table-tbody > tr > td {
+  font-size: 14px;
+  padding: 10px;
+}
+
+/* Pagination styles */
+.transaction-table-wrapper .ant-pagination {
+  display: flex;
+  justify-content: center;
+  padding-top: 16px;
 }
 
 .amount-income {
@@ -266,7 +299,7 @@
   }
 
   .export-import {
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     gap: 8px;
   }
 
