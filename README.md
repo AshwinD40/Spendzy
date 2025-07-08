@@ -1,12 +1,70 @@
-# React + Vite
+# 💰 Spendzy – Personal Finance Tracker
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Spendzy is a personal finance tracker web app to manage income and expenses with filters, CSV import/export, and real-time data visualization.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🚀 Live Demo
 
-## Expanding the ESLint configuration
+🔗 [Live Site](https://spendzy.vercel.app/)  
+🔗 [GitHub Repository](https://github.com/AshwinD40/Spendzy)
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+---
+
+## 🧰 Tech Stack
+
+- **Frontend:** React.js, Tailwind CSS, Ant Design  
+- **State Management:** Context API  
+- **Backend/Database:** Firebase Firestore  
+- **Data Visualization:** Ant Design Charts  
+- **CSV Handling:** Custom CSV parser and exporter
+
+---
+
+## 📌 Features
+
+- 💼 Track income and expenses with category-wise filtering
+- 📊 Real-time chart visualization of transaction trends
+- 📂 Import/Export transactions via CSV
+- 🔍 Search, sort, and filter by date, type, or keyword
+- 📱 Fully responsive design for mobile and desktop
+
+---
+
+## ⚙️ Installation & Setup
+ 
+### 🔁 Clone the Repository
+```base
+git clone https://github.com/AshwinD40/Spendzy.git
+cd Spendzy
+```
+
+### 📦 Install Dependencies
+```base
+npm install
+```
+
+### ▶️ Run the App
+```base
+npm start
+```
+
+## 🔧 Firebase Setup
+1. Create a Firebase project at https://console.firebase.google.com
+2. Enable Firestore Database
+3. Copy your Firebase config and add it to a .env file like this:
+
+```
+env
+VITE_FIREBASE_API_KEY=your_api_key
+VITE_FIREBASE_AUTH_DOMAIN=your_auth_domain
+VITE_FIREBASE_PROJECT_ID=your_project_id
+VITE_FIREBASE_STORAGE_BUCKET=your_bucket
+VITE_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
+VITE_FIREBASE_APP_ID=your_app_id
+```
+
+# 🙋‍♂️ Author
+Ashwin Chaudhary
+LinkedIn • GitHub
+
