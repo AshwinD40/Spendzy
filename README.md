@@ -66,5 +66,9 @@ VITE_FIREBASE_APP_ID=your_app_id
 
 # 🙋‍♂️ Author
 Ashwin Chaudhary
-LinkedIn • GitHub
+
+[🔗 GitHub](https://github.com/AshwinD40)  
+[🔗 LinkedIn](https://www.linkedin.com/in/ashwin40/)
+
+
 
