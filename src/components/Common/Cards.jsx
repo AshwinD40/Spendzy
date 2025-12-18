@@ -1,5 +1,5 @@
 import React from "react";
-import Button from "../common/Button";
+import Button from "../Common/Button";
 
 function formatAmount(amount) {
   if (typeof amount !== "number" || isNaN(amount)) return "0";
