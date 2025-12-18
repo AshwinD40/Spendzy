@@ -1,16 +1,16 @@
 import React, { useEffect,useState } from 'react'
-import Header from '../components/Header'
-import Cards from '../components/Cards'
+import Cards from '../components/Common/Cards'
+import Footer from '../components/Common/Footer'
 import AddIncome from '../components/Modal/AddIncome'
 import AddExpense from '../components/Modal/AddExpense'
-import moment from 'moment'
 import { addDoc, collection, getDocs,  } from 'firebase/firestore'
 import { auth, db } from '../firebase'
 import toast from 'react-hot-toast'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import TransactionTable from '../components/TransactionTable'
-import Charts from '../components/Charts'
-import NoTransaction from '../components/NoTransaction'
+import Charts from '../components/Charts';
+import NoTransaction from '../components/Common/NoTransaction';
+import Navbar from '../components/Common/Navbar';
 
 function Dashboard() {
 
@@ -78,25 +78,22 @@ function Dashboard() {
   }
 
   useEffect(() => {
-    calculateBalance();
-  }, [transactions])
-
-  function calculateBalance() {
     let incomeTotal = 0;
     let expenseTotal = 0;
 
     transactions.forEach((transaction) => {
-      if(transaction.type === "income"){
+      if (transaction.type === "income") {
         incomeTotal += transaction.amount;
-      } else{
+      } else {
         expenseTotal += transaction.amount;
       }
-    })
+    });
 
     setIncome(incomeTotal);
     setExpense(expenseTotal);
     setTotalBalance(incomeTotal - expenseTotal);
-  }
+  }, [transactions]);
+
 
   useEffect(() => {
     const fetchTransaction = async () => {
@@ -146,43 +143,73 @@ function Dashboard() {
 
 
   return (
-     
-    <div className='deshboard'>
-      <Header/>
-      { loading || !showData
-        ? null
-        : (<>
-          <Cards 
-            income={income}
-            expense={expense}
-            totalBalance={totalBalance}
-            showExpenseModal={showExpenseModal}
-            showIncomeModal={showIncomeModal}
-          />
+    <div className="min-h-screen w-full overflow-x-hidden relative">
+      {/* Ambient background glow */}
+      <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
+        <div className="absolute top-[-35%] left-[-25%] w-[520px] h-[520px] bg-blue-500/10 rounded-full blur-[160px]" />
+        <div className="absolute bottom-[-35%] right-[-25%] w-[520px] h-[520px] bg-rose-500/10 rounded-full blur-[160px]" />
+      </div>
+      <Navbar />
+      {loading || !showData ? null : (
+        <main
+          className=" w-full max-w-[1120px] mx-auto space-y-6 py-20 "
+        >
+          {/* Cards */}
+          <section className="relative p-1 sm:p-2">
+            <Cards
+              income={income}
+              expense={expense}
+              totalBalance={totalBalance}
+              showExpenseModal={showExpenseModal}
+              showIncomeModal={showIncomeModal}
+            />
+          </section>
 
+          <div className="relative my-4 sm:my-6">
+            <div className="h-px w-full bg-gradient-to-r from-transparent via-white/15 to-transparent" />
+          </div>
+
+          {/* Charts */}
+          <section className="relative p-1 sm:p-2">
+            {transactions.length !== 0 ? (
+              <Charts sortedTransactions={sortedTransactions} />
+            ) : (
+              <NoTransaction />
+            )}
+          </section>
+
+          <div className="relative my-4 sm:my-6">
+            <div className="h-px w-full bg-gradient-to-r from-transparent via-white/15 to-transparent" />
+          </div>
+
+          {/* Table */}
+          <section className="relative ">
+            <TransactionTable
+              transactions={transactions}
+              addTransaction={addTransaction}
+            />
+          </section>
+          <div className="relative my-6 sm:my-8">
+            <div className="h-px w-full bg-gradient-to-r from-transparent via-white/15 to-transparent" />
+          </div>
+
+          <Footer />
+
+          {/* Modals */}
           <AddExpense
             isExpenseModalVisible={isExpenseModalVisible}
             handleExpenseCancle={handleExpenseCancle}
-            onFinish={onFinish}  
+            onFinish={onFinish}
           />
-
           <AddIncome
             isIncomeModalVisible={isIncomeModalVisible}
             handleIncomeCancle={handleIncomeCancle}
-            onFinish={onFinish}  
+            onFinish={onFinish}
           />
-          {transactions.length != 0 ? (<Charts sortedTransactions={sortedTransactions}/>)  : (< NoTransaction />) }
-          
-          
-          <TransactionTable 
-            transactions={transactions} 
-            addTransaction={addTransaction} 
-          />
-        </>)
-      } 
-    </div> 
-        
-  )
+        </main>
+      )}
+    </div>
+  );
 }
 
 export default Dashboard

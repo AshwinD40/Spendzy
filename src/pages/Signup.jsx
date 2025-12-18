@@ -1,16 +1,15 @@
-import React from 'react'
-import Header from '../components/Header'
-import SignupSignin from '../components/SignupSignin'
+import React from "react";
+import SignupSignin from "../components/SignupSignin";
 
-function Signup() {
+function Signup({ onSuccess, onBack }) {
   return (
-    <div>
-      <Header/>
-      <div className='wrapper'>
-        <SignupSignin/>
-      </div>
+    <div className="flex items-center justify-center min-h-[calc(100vh-64px)] px-4">
+      <SignupSignin
+        onSuccess={onSuccess}
+        onBack={onBack}
+      />
     </div>
-  )
+  );
 }
 
-export default Signup
+export default Signup;

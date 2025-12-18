@@ -1,6 +1,5 @@
-import Button from '../Button';
-import Input from '../input'
-import './style.css'
+import Button from './common/Button'
+import Input from './Common/Input'
 import React, { useState } from 'react'
 import toast from 'react-hot-toast';
 import { 
@@ -8,7 +7,7 @@ import {
   signInWithEmailAndPassword , 
   signInWithPopup,
 } from "firebase/auth";
-import { auth, db, provider } from '../../firebase'
+import { auth, db, provider } from '../firebase'
 import { doc, getDoc, setDoc } from "firebase/firestore"; 
 import { useNavigate } from 'react-router-dom';
 import { FcGoogle } from "react-icons/fc";
@@ -25,6 +24,7 @@ function SignupSignin() {
   async function signupWithEmail(e) {
     e.preventDefault();
     setLoading(true);
+
       try {
         if (!name || !email || !password || !confirmPassword) {
           toast.error("Please fill all the fields");
@@ -36,28 +36,25 @@ function SignupSignin() {
           return;
         }
         toast.loading("Signing up...")
-        console.log("Trying to sign up .......")
+
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
-        console.log("User >>>> ", user);
 
         toast.dismiss(); 
         toast.success("Signed up successfully");
 
-        // clear fields
-        setLoading(false)
         setName("");
         setEmail("");
         setPassword("");
         setConfirmPassword("");
-        createDoc(user)
+
+        await createDoc(user)
+
         navigate("/dashboard")
 
       } catch (error) {
         toast.dismiss();
         toast.error(error.message);
-        console.log("Error creating user");
-
       } finally {
         setLoading(false);
       }
@@ -66,6 +63,7 @@ function SignupSignin() {
   async function loginUsingEmail(e){
     e.preventDefault();
     setLoading(true);
+
     try {
       if(!email || !password){
         toast.error("Please fill all the fields");
@@ -73,26 +71,19 @@ function SignupSignin() {
       }
 
       toast.loading("Logining...")
-      console.log("Trying to login .......")
-      const userCredential = await signInWithEmailAndPassword(auth, email, password)
-      const user = userCredential.user;
-      console.log("User >>>> ", user);
+      await signInWithEmailAndPassword(auth, email, password)
 
       toast.dismiss();
       toast.success("Logged in successfully");
 
-      // clear fields
-      setLoading(false)
       setEmail("");
       setPassword("");
+
       navigate("/dashboard")
         // ...
     } catch (error) {
       toast.dismiss();
-      toast.error("Email or password is incorrect");
-      const errorCode = error.code;
-      const errorMessage = error.message;
-      console.log("Error logging in", errorCode, errorMessage);  
+      toast.error("Email or password is incorrect", error);
     } finally {
       setLoading(false);
     }
@@ -135,131 +126,170 @@ function SignupSignin() {
 
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
-      await createUserDocument(user);
+      // eslint-disable-next-line no-undef
+      await createDoc(user);
+
+      toast.dismiss();
       toast.success("User Authenticated Successfully!");
+
       navigate("/dashboard");
 
     } catch (error) {
+      toast.dismiss();
       toast.error(error.message);
-      console.error("Error signing in with Google: ", error.message);
+      
     } finally{
       setLoading(false);
-      toast.dismiss();
     }
-    
   }
-
 
   return (
     <>
-    { loginForm 
-      ?  <div className='signup-wrapper'>
-          <h2 className='title'>
-            Login on <span style={{color: '#4226f8'}}>Spendzy</span>
+      {loginForm ? (
+        <div className=" w-full max-w-sm sm:max-w-md rounded-2xl bg-black/50 backdrop-blur-2xl border border-white/10 shadow-xl p-6 sm:p-8">
+          <h2 className="text-lg sm:text-xl font-semibold text-center mb-5">
+            Login on <span className="text-blue-400">Spendzy</span>
           </h2>
-          <form >
-             
-            <Input 
+
+          <form className="space-y-4">
+            <Input
               type="email"
-              label={"Email"}
-              placeholder={"johndoe911@gmail.com"}
+              label="Email"
+              placeholder="johndoe911@gmail.com"
               state={email}
               setState={setEmail}
-            /> 
-            <Input 
+            />
+
+            <Input
               type="password"
-              label={"Password"}
-              placeholder={"Example@123"}
+              label="Password"
+              placeholder="Example@123"
               state={password}
               setState={setPassword}
-            /> 
-            <Button 
+            />
+
+            <Button
               onClick={loginUsingEmail}
               disabled={loading}
-              text={loading ? "Loading..." : "Login"} 
-            /> 
-
-            <p className='p-login'>Or</p>
-
-            <Button 
-              onClick={googleAuth} 
-              text={
-                loading ? "Loading..." : (
-                <div className='google'>
-                  <FcGoogle size={24} />
-                  Signup with Google
-                </div>
-              )} 
-              google={true} 
-              type="button" 
+              text={loading ? "Loading..." : "Login"}
             />
-            <p  className='p-login'>Or Dont have An Account? <span onClick={() => setLoginForm(false)} style={{color: "#4226f8", cursor: "pointer", fontSize: "0.9rem"}}> Signup</span></p>
-          </form>
-        </div> 
 
-      : <div className='signup-wrapper'>
-          <h2 className='title'>
-            Sign Up on <span style={{color: '#4226f8'}}>Spendzy</span>
+            <p className="text-center text-xs text-gray-400">or</p>
+
+            <Button
+              onClick={googleAuth}
+              google
+              type="button"
+              text={
+                loading ? (
+                  "Loading..."
+                ) : (
+                  <div className="flex items-center justify-center gap-2 text-sm">
+                    <FcGoogle size={18} />
+                    <span>Login with Google</span>
+                  </div>
+                )
+              }
+            />
+
+            <p className="text-center text-xs text-gray-400">
+              Don’t have an account?
+              <span
+                onClick={() => setLoginForm(false)}
+                className="ml-1 text-blue-400 cursor-pointer hover:underline"
+              >
+                Signup
+              </span>
+            </p>
+          </form>
+        </div>
+      ) : (
+        <div className="
+          w-full max-w-sm sm:max-w-md
+          rounded-2xl
+          bg-black/50 backdrop-blur-2xl
+          border border-white/10
+          shadow-xl
+          p-6 sm:p-8
+        ">
+          <h2 className="text-lg sm:text-xl font-semibold text-center mb-5">
+            Sign up on <span className="text-blue-400">Spendzy</span>
           </h2>
-          <form  >
-            <Input 
+
+          <form className="space-y-4">
+            <Input
               type="text"
-              label={"Full Name"}
-              placeholder={"John Doe"}
+              label="Full Name"
+              placeholder="John Doe"
               state={name}
               setState={setName}
-            /> 
-            <Input 
+            />
+
+            <Input
               type="email"
-              label={"Email"}
-              placeholder={"johndoe911@gmail.com"}
+              label="Email"
+              placeholder="johndoe911@gmail.com"
               state={email}
               setState={setEmail}
-            /> 
-            <Input 
+            />
+
+            <Input
               type="password"
-              label={"Password"}
-              placeholder={"Example@123"}
+              label="Password"
+              placeholder="Example@123"
               state={password}
               setState={setPassword}
-            /> 
-            <Input 
+            />
+
+            <Input
               type="password"
-              label={"Confirm Password"}
-              placeholder={"Example@123"}
+              label="Confirm Password"
+              placeholder="Example@123"
               state={confirmPassword}
               setState={setConfirmPassword}
             />
-            <Button 
+
+            <Button
               onClick={signupWithEmail}
               disabled={loading}
-              text={loading ? "Loading..." : "Signup"} 
-              type="submit" 
-            /> 
-
-            <p className='p-login'>Or</p>
-
-            <Button 
-              onClick={googleAuth} 
-              text={
-                loading ? "Loading..." : (
-                <div className='google'>
-                  <FcGoogle size={24} />
-                  Signup with Google
-                </div>
-              )} 
-              google={true} 
-              type="button" 
+              text={loading ? "Loading..." : "Signup"}
+              type="submit"
             />
 
-            <p className='p-login'>Have An Account ? <span onClick={() => setLoginForm(true)} style={{color: '#4226f8', cursor: "pointer", fontSize: "0.9rem"}}>Login</span></p>
+            <p className="text-center text-xs text-gray-400">or</p>
+
+            <Button
+              onClick={googleAuth}
+              google
+              type="button"
+              text={
+                loading ? (
+                  "Loading..."
+                ) : (
+                  <div className="flex items-center justify-center gap-2 text-sm">
+                    <FcGoogle size={18} />
+                    <span>Signup with Google</span>
+                  </div>
+                )
+              }
+            />
+
+            <p className="text-center text-xs text-gray-400">
+              Already have an account?
+              <span
+                onClick={() => setLoginForm(true)}
+                className="ml-1 text-blue-400 cursor-pointer hover:underline"
+              >
+                Login
+              </span>
+            </p>
           </form>
-        </div> 
-    }
-     
+        </div>
+      )}
     </>
-    
-  )
+  );
+
+
 }
 
 export default SignupSignin

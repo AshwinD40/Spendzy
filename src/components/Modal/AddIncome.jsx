@@ -1,96 +1,160 @@
-import React from 'react'
-import './style.css'
-import { Button, Modal,Input, Form, DatePicker, Select } from 'antd'
-import moment from 'moment';
+import React from "react";
+import { Modal, Input, Form, DatePicker, Select } from "antd";
+import GlassSelect from "../Common/GlassSelector";
 
 function AddIncome({
   isIncomeModalVisible,
   handleIncomeCancle,
   onFinish
 }) {
-
   const [form] = Form.useForm();
+
+  const incomeOptions = [
+    { value: "salary", label: "Salary" },
+    { value: "freelance", label: "Freelance" },
+    { value: "investment", label: "Investment" },
+    { value: "papakepaise", label: "Papa Ke Paise" },
+    { value: "other", label: "Other" }
+  ];
+
+
   return (
-   <Modal
-      title="Add Income"
+    <Modal
       open={isIncomeModalVisible}
       onCancel={handleIncomeCancle}
-      footer={null} 
-      className='custom-modal'
-      width={440}
+      footer={null}
       centered
+      className="!w-[440px]"
+      title={
+        <div className="flex flex-col gap-1">
+          <h2 className="text-xl font-semibold text-white">
+            Add Income
+          </h2>
+          <p className="text-sm text-gray-300">
+            Record money coming in
+          </p>
+        </div>
+      }
+      styles={{
+         header: {
+          background: "transparent",
+          borderBottom: "none",
+          paddingBottom: "0"
+        },
+        content: {
+          background: "rgba(20,20,20,0.9)",
+          backdropFilter: "blur(28px)",
+          borderRadius: "24px",
+          border: "1px solid rgba(255,255,255,0.18)",
+          boxShadow:
+            "0 30px 80px rgba(0,0,0,0.65), inset 0 0 0 1px rgba(255,255,255,0.04)"
+        }
+      }}
     >
       <Form
         form={form}
-        layout='vertical'
+        layout="vertical"
+        className="mt-4 space-y-4"
         onFinish={(values) => {
           onFinish(values, "income");
           form.resetFields();
         }}
-        className='custom-form'
       >
+        {/* Name */}
         <Form.Item
-          style={{fontWeight:600}}
           name="name"
-          label="Name"
-          rules={[{ 
-            required: true,
-            message: 'Please enter a name'
-          }]}
+          label={<span className="text-gray-200 text-sm">Name</span>}
+          rules={[{ required: true, message: "Please enter a name" }]}
         >
-          <Input type='text' className='modal-input'/>
-        
+          <Input
+            placeholder="Salary / Freelance"
+            className="
+              !bg-white/10
+              !border-white/20
+              !text-white
+              placeholder:!text-gray-400
+              rounded-xl px-4 py-2.5
+              focus:!border-emerald-400/60
+              focus:!shadow-[0_0_0_3px_rgba(52,211,153,0.25)]
+            "
+          />
         </Form.Item>
+
+        {/* Amount */}
         <Form.Item
-          style={{fontWeight:600}}
           name="amount"
-          label="Amount"
-          rules={[{ 
-            required: true,
-            message: 'Please input the income amount'
-          }]}
+          label={<span className="text-gray-200 text-sm">Amount</span>}
+          rules={[{ required: true, message: "Please enter amount" }]}
         >
-          <Input type='number' className='modal-input'/>
-        
+          <Input
+            type="number"
+            placeholder="50000"
+            className="
+              !bg-white/10
+              !border-white/20
+              !text-white
+              placeholder:!text-gray-400
+              rounded-xl px-4 py-2.5
+              focus:!border-emerald-400/60
+            "
+          />
         </Form.Item>
+
+        {/* Date */}
         <Form.Item
-          style={{fontWeight:600}}
           name="date"
-          label="Date"
-          rules={[{ 
-            required: true,
-            message: 'Please select the income date'
-          }]}
+          label={<span className="text-gray-200 text-sm">Date</span>}
+          rules={[{ required: true, message: "Select a date" }]}
         >
-          <DatePicker format="YYYY-MM-DD" className='modal-input '/>
+          <DatePicker
+            format="YYYY-MM-DD"
+            className="
+              !w-full
+              !bg-white/10
+              !border-white/20
+              !text-white
+              rounded-xl px-4 py-2
+            "
+          />
+
         </Form.Item>
 
         <Form.Item
-          style={{fontWeight:600}}
           name="tag"
-          label="Tag"
-          rules={[{ 
-            required: true,
-            message: 'Please select a tag'
-          }]}
+          rules={[{ required: true, message: "Select a category" }]}
         >
-          <Select className='select-input'>
-            <Select.Option value="salary">Salary</Select.Option>
-            <Select.Option value="freelance">Freelance</Select.Option>
-            <Select.Option value="investment">Investment</Select.Option>
-            <Select.Option value="papakepaise">Papa Ke paise</Select.Option>
-            <Select.Option value="other">Other</Select.Option>
-          </Select>
-        
+          <GlassSelect 
+            label="Category"
+            value={form.getFieldValue("tag")}
+            onChange={(val) =>  form.setFieldValue("tag", val)}
+            options={incomeOptions}
+            accent="emerald"
+          />
         </Form.Item>
-        <Form.Item>
-          <Button className="btn btn-primary " type="primary" htmlType="submit">
+
+
+
+        {/* Submit */}
+        <Form.Item className="pt-2">
+          <button
+            type="submit"
+            className="
+              w-full rounded-xl py-3 font-semibold
+              bg-emerald-500/25 text-emerald-200
+              border border-emerald-400/30
+              backdrop-blur-xl
+              transition-all duration-300
+              hover:bg-emerald-500/35
+              hover:shadow-[0_12px_45px_rgba(52,211,153,0.35)]
+              hover:scale-[1.02]
+            "
+          >
             Add Income
-          </Button>
+          </button>
         </Form.Item>
       </Form>
     </Modal>
-  )
+  );
 }
 
-export default AddIncome
+export default AddIncome;

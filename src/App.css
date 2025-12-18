@@ -1,18 +1,19 @@
-.wrapper{
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100vw;
-  height: 90vh;
+
+.custom-select-dropdown .ant-select-item {
+  color: #e5e7eb;
+  background: transparent;
 }
 
-.deshboard{
-  display: flex;
-  flex-direction: column;
-  background-color: rgb(158, 158, 157);
-  width: 100vw;
-  height:fit-content;
-  min-height: 100vh;
-
+.custom-select-dropdown .ant-select-item-option-active {
+  background: rgba(255,255,255,0.08);
 }
 
+.custom-select-dropdown .ant-select-item-option-selected {
+  background: rgba(16,185,129,0.25);
+  color: #ecfdf5;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text",
+    "Inter", system-ui, sans-serif;
+}
