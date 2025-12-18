@@ -126,7 +126,6 @@ function SignupSignin() {
 
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
-      // eslint-disable-next-line no-undef
       await createDoc(user);
 
       toast.dismiss();
