@@ -50,7 +50,7 @@ function SignupSignin() {
 
         await createDoc(user)
 
-        navigate("/dashboard")
+        navigate("/app")
 
       } catch (error) {
         toast.dismiss();
@@ -79,7 +79,7 @@ function SignupSignin() {
       setEmail("");
       setPassword("");
 
-      navigate("/dashboard")
+      navigate("/app")
         // ...
     } catch (error) {
       toast.dismiss();
@@ -131,7 +131,7 @@ function SignupSignin() {
       toast.dismiss();
       toast.success("User Authenticated Successfully!");
 
-      navigate("/dashboard");
+      navigate("/app");
 
     } catch (error) {
       toast.dismiss();
@@ -145,7 +145,7 @@ function SignupSignin() {
   return (
     <>
       {loginForm ? (
-        <div className=" w-full max-w-sm sm:max-w-md rounded-2xl bg-black/50 backdrop-blur-2xl border border-white/10 shadow-xl p-6 sm:p-8">
+        <div className="w-full">
           <h2 className="text-lg sm:text-xl font-semibold text-center mb-5">
             Login on <span className="text-blue-400">Spendzy</span>
           </h2>
@@ -203,14 +203,7 @@ function SignupSignin() {
           </form>
         </div>
       ) : (
-        <div className="
-          w-full max-w-sm sm:max-w-md
-          rounded-2xl
-          bg-black/50 backdrop-blur-2xl
-          border border-white/10
-          shadow-xl
-          p-6 sm:p-8
-        ">
+        <div className="w-full">
           <h2 className="text-lg sm:text-xl font-semibold text-center mb-5">
             Sign up on <span className="text-blue-400">Spendzy</span>
           </h2>
