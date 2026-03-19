@@ -1,8 +1,10 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import HomeLayout from "./Layout/HomeLayout";
 import Home from "./pages/Home";
-import Signup from "./pages/Signup";
-import Dashboard from "./pages/Dashboard";
+// New SPA layout & views
+import MainAppLayout from "./Layout/MainAppLayout";
+import OverviewView from "./pages/Views/OverviewView";
+import TransactionsView from "./pages/Views/TransactionsView";
+
 import { Toaster } from "react-hot-toast";
 import { auth } from "./firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
@@ -11,7 +13,7 @@ function App() {
   const [user, loading] = useAuthState(auth);
 
   if (loading) {
-    return null; // or a loader, but keep it simple
+    return null; 
   }
 
   return (
@@ -19,31 +21,24 @@ function App() {
       <Toaster position="top-center" />
 
       <BrowserRouter>
-        <HomeLayout>
-          <Routes>
-            {/* Home */}
-            <Route path="/" element={<Home />} />
+        <Routes>
+          {/* Authenticated Flow */}
+          {user ? (
+            <Route path="/app" element={<MainAppLayout />}>
+              <Route index element={<OverviewView />} />
+              <Route path="transactions" element={<TransactionsView />} />
+              <Route path="*" element={<Navigate to="/app" replace />} />
+            </Route>
+          ) : null}
 
-            {/* Auth */}
-            <Route
-              path="/auth"
-              element={
-                user ? <Navigate to="/dashboard" replace /> : <Signup />
-              }
-            />
-
-            {/* Dashboard */}
-            <Route
-              path="/dashboard"
-              element={
-                user ? <Dashboard /> : <Navigate to="/" replace />
-              }
-            />
-
-            {/* Catch-all */}
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
-        </HomeLayout>
+          {/* Unauthenticated Flow */}
+          <Route 
+            path="/" 
+            element={ user ? <Navigate to="/app" replace /> : <Home /> } 
+          />
+          {/* Catch-all */}
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
       </BrowserRouter>
     </>
   );
