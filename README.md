@@ -1,74 +1,120 @@
-# 💰 Spendzy – Personal Finance Tracker
+# 💰 Spendzy – Next-Generation Personal Finance Tracker
 
-Spendzy is a personal finance tracker web app to manage income and expenses with filters, CSV import/export, and real-time data visualization.
-
----
-
-## 🚀 Live Demo
-
-🔗 [Live Site](https://spendzy.vercel.app/)  
-🔗 [GitHub Repository](https://github.com/AshwinD40/Spendzy)
+Spendzy is a premium, high-performance personal finance manager designed with a stunning glassmorphic UI, responsive layouts, and seamless transitions. It empowers users to monitor income, define custom monthly budgets, and analyze spending patterns using interactive visualizations, instant quick-log shortcuts, and robust CSV sheet handling.
 
 ---
 
-## 🧰 Tech Stack
+## ✨ Features
 
-- **Frontend:** React.js, Tailwind CSS, Ant Design  
-- **State Management:** Context API  
-- **Backend/Database:** Firebase Firestore  
-- **Data Visualization:** Ant Design Charts  
-- **CSV Handling:** Custom CSV parser and exporter
+- ⚡ **Magic Command Center (`Ctrl + K` / `Cmd + K`)**  
+  Quickly log transactions using a shorthand parsing engine. Typing `"Sushi 450"` or `"Salary 80000"` instantly categorizes, maps transaction types, and records the entry.
+- 📊 **Dynamic Data Visualizations**  
+  Real-time area charts and category breakdowns using **Recharts** to visualize cash flow trends, comparison ratios, and spending allocations.
+- 🎯 **Smart Budget Management**  
+  Set monthly spending caps for individual categories (Food, Travel, Bills, etc.). Features visual progress indicators, warning thresholds, and instant over-limit notifications.
+- 📂 **Advanced Transaction Ledger**  
+  Paginated transaction sheets powered by **TanStack Table** with full-text search, type filtering, sorting by date/amount, and instant CSV imports/exports via **PapaParse**.
+- 🌓 **Ambient Dark/Light Mode**  
+  A polished, system-aware dark mode theme featuring glassmorphism, glowing gradient backgrounds, and premium micro-animations powered by **Framer Motion**.
+- 🔒 **Secure Firebase Integration**  
+  Secure authentication protocols and real-time Firestore database sync for persistent client settings, custom currencies, budgets, and transactions.
 
 ---
 
-## 📌 Features
+## 🛠️ Tech Stack
 
-- 💼 Track income and expenses with category-wise filtering
-- 📊 Real-time chart visualization of transaction trends
-- 📂 Import/Export transactions via CSV
-- 🔍 Search, sort, and filter by date, type, or keyword
-- 📱 Fully responsive design for mobile and desktop
+- **Framework:** React 19 (Functional Components, Hooks)
+- **Styling:** Tailwind CSS v4 (with `@tailwindcss/vite`)
+- **Routing:** React Router v7
+- **Database & Auth:** Firebase v11 (Firestore & Authentication)
+- **Tables & Grid:** TanStack Table v8
+- **Charts:** Recharts v3
+- **Animations:** Framer Motion v12
+- **CSV Engine:** PapaParse v5
+- **Icons & Alerts:** React Icons, React Hot Toast
+
+---
+
+## 📂 Project Structure
+
+```text
+spendzy/
+├── public/                 # Static assets & public icons
+├── src/
+│   ├── Layout/
+│   │   ├── MainAppLayout.jsx # Command center, settings modal, global states
+│   │   └── Sidebar.jsx       # Side navbar and responsive drawer navigation
+│   ├── components/
+│   │   ├── Common/           # Reusable UI inputs, cards, toggle switches, selectors
+│   │   ├── Modal/            # Add Income, Add Expense, Auth dialogs
+│   │   ├── Charts.jsx        # Data visualization logic using Recharts
+│   │   ├── PlaygroundWidget.jsx # Interactive landing-page mock sandbox
+│   │   ├── SignupSignin.jsx  # OAuth & Email Auth controller
+│   │   └── TransactionTable.jsx # TanStack list with search, sorting, and pagination
+│   ├── hooks/
+│   │   └── useTheme.js       # Custom theme hook for dark/light state persisted in localStorage
+│   ├── pages/
+│   │   ├── Views/            # Dashboard subviews (Overview, Transactions, Budgets)
+│   │   ├── Home.jsx          # Landing page with live demo widget
+│   │   ├── Features.jsx      # Product features overview
+│   │   ├── Customers.jsx     # client testimonials page
+│   │   ├── Pricing.jsx       # Pricing tiers
+│   │   ├── Signup.jsx        # Auth view layout
+│   │   └── NotFound.jsx      # Custom error layout
+│   ├── App.jsx               # Navigation routes and layout wrappers
+│   ├── firebase.js           # Firebase app initialization config
+│   ├── index.css             # Base styles, global variables, and scrollbars
+│   └── main.jsx              # App mount point
+├── vercel.json             # Vercel deployment configuration
+├── vite.config.js          # Vite config bundling Tailwind and React
+└── package.json            # Scripts and dependencies
+```
 
 ---
 
 ## ⚙️ Installation & Setup
- 
-### 🔁 Clone the Repository
-```base
+
+### 1. Clone the Repository
+```bash
 git clone https://github.com/AshwinD40/Spendzy.git
 cd Spendzy
 ```
 
-### 📦 Install Dependencies
-```base
+### 2. Install Dependencies
+Ensure you have Node.js installed (v18+ recommended):
+```bash
 npm install
 ```
 
-### ▶️ Run the App
-```base
-npm start
+### 3. Setup Environment Variables
+Create a `.env` file in the root directory and add your Firebase API configuration details:
+```env
+VITE_FIREBASE_API_KEY=your_firebase_api_key
+```
+*(The App also automatically infers project details, storage, and database paths based on this config).*
+
+### 4. Run the Development Server
+```bash
+npm run dev
+```
+Open your browser and navigate to `http://localhost:5173`.
+
+### 5. Production Build
+To create an optimized, minified production build:
+```bash
+npm run build
 ```
 
-## 🔧 Firebase Setup
-1. Create a Firebase project at https://console.firebase.google.com
-2. Enable Firestore Database
-3. Copy your Firebase config and add it to a .env file like this:
+---
 
-```
-env
-VITE_FIREBASE_API_KEY=your_api_key
-VITE_FIREBASE_AUTH_DOMAIN=your_auth_domain
-VITE_FIREBASE_PROJECT_ID=your_project_id
-VITE_FIREBASE_STORAGE_BUCKET=your_bucket
-VITE_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
-VITE_FIREBASE_APP_ID=your_app_id
-```
+## 🙋‍♂️ Author
 
-# 🙋‍♂️ Author
-Ashwin Chaudhary
+**Ashwin Chaudhary**
+- GitHub: [@AshwinD40](https://github.com/AshwinD40)
+- LinkedIn: [Ashwin Chaudhary](https://www.linkedin.com/in/ashwin40/)
 
-[🔗 GitHub](https://github.com/AshwinD40)  
-[🔗 LinkedIn](https://www.linkedin.com/in/ashwin40/)
+---
 
+## 📄 License
 
-
+This project is open-source and available under the [MIT License](LICENSE).
