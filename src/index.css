@@ -1,8 +1,17 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
 
-/* Neutral dark canvas (NO gradient here) */
+@theme {
+  --font-sans: "Geist", sans-serif;
+  --font-serif: "Lora", serif;
+  --font-geist: "Geist", sans-serif;
+  --font-lora: "Lora", serif;
+}
+
+@source inline("text-{slate,gray,zinc,neutral,stone,red,orange,amber,yellow,lime,green,emerald,teal,cyan,sky,blue,indigo,violet,purple,fuchsia,pink,rose}-300");
+@source inline("focus:ring-{slate,gray,zinc,neutral,stone,red,orange,amber,yellow,lime,green,emerald,teal,cyan,sky,blue,indigo,violet,purple,fuchsia,pink,rose}-400/40");
+
+/* Canvas styles with theme support */
 html,
 body,
 #root {
@@ -10,14 +19,22 @@ body,
   padding: 0;
   min-height: 100%;
   width: 100%;
-  background-color: #0a0a0a; /* neutral dark */
+  background-color: #f5f5f5; /* neutral-100 default */
+  color: #171717; /* neutral-900 default */
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+html.dark,
+html.dark body,
+html.dark #root {
+  background-color: #171717; /* neutral-900 priority */
+  color: #f5f5f5; /* neutral-100 priority */
   color-scheme: dark;
 }
 
 /* Typography baseline */
 body {
-  font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont,
-    "Segoe UI", sans-serif;
+  font-family: "Geist", sans-serif;
   overflow-x: hidden;
   overscroll-behavior: none;
 }

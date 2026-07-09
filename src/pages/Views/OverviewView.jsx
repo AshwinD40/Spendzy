@@ -5,7 +5,7 @@ import Charts from '../../components/Charts';
 import NoTransaction from '../../components/Common/NoTransaction';
 
 export default function OverviewView() {
-  const { transactions, showExpenseModal, showIncomeModal } = useOutletContext();
+  const { transactions, showExpenseModal, showIncomeModal, currency } = useOutletContext();
 
   const income = useMemo(() => transactions.filter(t => t.type === 'income').reduce((a,b) => a + b.amount, 0), [transactions]);
   const expense = useMemo(() => transactions.filter(t => t.type === 'expense').reduce((a,b) => a + b.amount, 0), [transactions]);
@@ -16,8 +16,8 @@ export default function OverviewView() {
   return (
     <div className="space-y-8 pb-10">
       <div>
-        <h1 className="text-2xl md:text-3xl font-bold text-white mb-2">Overview</h1>
-        <p className="text-gray-400 text-sm">Welcome back! Here is your financial summary.</p>
+        <h1 className="text-2xl md:text-3xl font-serif font-bold text-neutral-800 dark:text-white mb-2">Overview</h1>
+        <p className="text-neutral-500 dark:text-gray-400 text-sm">Welcome back! Here is your financial summary.</p>
       </div>
 
       <Cards
@@ -26,11 +26,12 @@ export default function OverviewView() {
         totalBalance={totalBalance}
         showExpenseModal={showExpenseModal}
         showIncomeModal={showIncomeModal}
+        currency={currency}
       />
 
       <div className="pt-4">
         {transactions.length !== 0 ? (
-          <Charts sortedTransactions={sortedTransactions} />
+          <Charts sortedTransactions={sortedTransactions} currency={currency} />
         ) : (
           <NoTransaction />
         )}

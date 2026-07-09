@@ -1,6 +1,6 @@
 import Button from './Common/Button'
 import Input from './Common/Input'
-import React, { useState } from 'react'
+import { useState } from 'react'
 import toast from 'react-hot-toast';
 import { 
   createUserWithEmailAndPassword, 
@@ -11,14 +11,14 @@ import { auth, db, provider } from '../firebase'
 import { doc, getDoc, setDoc } from "firebase/firestore"; 
 import { useNavigate } from 'react-router-dom';
 import { FcGoogle } from "react-icons/fc";
-function SignupSignin() {
+function SignupSignin({ initialLogin = false }) {
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [loginForm , setLoginForm] = useState(false);
+  const [loginForm , setLoginForm] = useState(initialLogin);
   const navigate = useNavigate();
 
   async function signupWithEmail(e) {
@@ -70,7 +70,7 @@ function SignupSignin() {
         return;
       }
 
-      toast.loading("Logining...")
+      toast.loading("Logging in...")
       await signInWithEmailAndPassword(auth, email, password)
 
       toast.dismiss();
@@ -145,9 +145,9 @@ function SignupSignin() {
   return (
     <>
       {loginForm ? (
-        <div className="w-full">
+        <div className="w-full text-neutral-800 dark:text-white">
           <h2 className="text-lg sm:text-xl font-semibold text-center mb-5">
-            Login on <span className="text-blue-400">Spendzy</span>
+            Login on <span className="text-emerald-600 dark:text-emerald-400">Spendzy</span>
           </h2>
 
           <form className="space-y-4">
@@ -173,7 +173,7 @@ function SignupSignin() {
               text={loading ? "Loading..." : "Login"}
             />
 
-            <p className="text-center text-xs text-gray-400">or</p>
+            <p className="text-center text-xs text-neutral-500 dark:text-gray-400">or</p>
 
             <Button
               onClick={googleAuth}
@@ -191,11 +191,11 @@ function SignupSignin() {
               }
             />
 
-            <p className="text-center text-xs text-gray-400">
+            <p className="text-center text-xs text-neutral-500 dark:text-gray-400">
               Don’t have an account?
               <span
                 onClick={() => setLoginForm(false)}
-                className="ml-1 text-blue-400 cursor-pointer hover:underline"
+                className="ml-1 text-emerald-600 dark:text-emerald-400 cursor-pointer hover:underline"
               >
                 Signup
               </span>
@@ -203,9 +203,9 @@ function SignupSignin() {
           </form>
         </div>
       ) : (
-        <div className="w-full">
+        <div className="w-full text-neutral-800 dark:text-white">
           <h2 className="text-lg sm:text-xl font-semibold text-center mb-5">
-            Sign up on <span className="text-blue-400">Spendzy</span>
+            Sign up on <span className="text-emerald-600 dark:text-emerald-400">Spendzy</span>
           </h2>
 
           <form className="space-y-4">
@@ -248,7 +248,7 @@ function SignupSignin() {
               type="submit"
             />
 
-            <p className="text-center text-xs text-gray-400">or</p>
+            <p className="text-center text-xs text-neutral-500 dark:text-gray-400">or</p>
 
             <Button
               onClick={googleAuth}
@@ -266,11 +266,11 @@ function SignupSignin() {
               }
             />
 
-            <p className="text-center text-xs text-gray-400">
+            <p className="text-center text-xs text-neutral-500 dark:text-gray-400">
               Already have an account?
               <span
                 onClick={() => setLoginForm(true)}
-                className="ml-1 text-blue-400 cursor-pointer hover:underline"
+                className="ml-1 text-emerald-600 dark:text-emerald-400 cursor-pointer hover:underline"
               >
                 Login
               </span>

@@ -1,4 +1,3 @@
-import React from "react";
 import transactions from "../../assets/transactions.svg";
 
 function NoTransaction() {

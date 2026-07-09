@@ -1,9 +1,14 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Home from "./pages/Home";
-// New SPA layout & views
+import Features from "./pages/Features";
+import Customers from "./pages/Customers";
+import Pricing from "./pages/Pricing";
 import MainAppLayout from "./Layout/MainAppLayout";
 import OverviewView from "./pages/Views/OverviewView";
 import TransactionsView from "./pages/Views/TransactionsView";
+import BudgetsView from "./pages/Views/BudgetsView";
+import NotFound from "./pages/NotFound";
+import Signup from "./pages/Signup";
 
 import { Toaster } from "react-hot-toast";
 import { auth } from "./firebase";
@@ -22,22 +27,29 @@ function App() {
 
       <BrowserRouter>
         <Routes>
-          {/* Authenticated Flow */}
-          {user ? (
-            <Route path="/app" element={<MainAppLayout />}>
-              <Route index element={<OverviewView />} />
-              <Route path="transactions" element={<TransactionsView />} />
-              <Route path="*" element={<Navigate to="/app" replace />} />
-            </Route>
-          ) : null}
+          {/* Standalone Auth Screen */}
+          <Route path="/signup" element={user ? <Navigate to="/app" replace /> : <Signup />} />
+          <Route path="/login" element={user ? <Navigate to="/app" replace /> : <Signup />} />
 
-          {/* Unauthenticated Flow */}
-          <Route 
-            path="/" 
-            element={ user ? <Navigate to="/app" replace /> : <Home /> } 
-          />
+          <Route element={<MainAppLayout />}>
+            {/* Home View */}
+            <Route path="/" element={user ? <Navigate to="/app" replace /> : <Home />} />
+
+            {/* Showcase / Catalog Views */}
+            <Route path="/features" element={<Features />} />
+            <Route path="/customers" element={<Customers />} />
+            <Route path="/pricing" element={<Pricing />} />
+
+            {/* Authenticated Dashboard Views */}
+            <Route path="/app">
+              <Route index element={user ? <OverviewView /> : <Navigate to="/" replace />} />
+              <Route path="transactions" element={user ? <TransactionsView /> : <Navigate to="/" replace />} />
+              <Route path="budgets" element={user ? <BudgetsView /> : <Navigate to="/" replace />} />
+            </Route>
+          </Route>
+
           {/* Catch-all */}
-          <Route path="*" element={<Navigate to="/" replace />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
     </>
@@ -45,3 +57,5 @@ function App() {
 }
 
 export default App;
+
+

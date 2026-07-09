@@ -47,13 +47,13 @@ export default function PlaygroundWidget() {
       exit={{ opacity: 0, scale: 0.9 }}
       layout
       transition={{ type: "spring", stiffness: 400, damping: 25 }}
-      className="flex items-center justify-between p-3 rounded-xl bg-white/[0.04] border border-white/5 shadow-sm"
+      className="flex items-center justify-between p-3 rounded-xl bg-neutral-200/50 dark:bg-white/[0.04] border border-neutral-300/60 dark:border-white/5 shadow-sm"
     >
       <div className="flex flex-col text-left">
-        <span className="text-xs font-bold text-gray-200">{t.name}</span>
-        <span className="text-[10px] text-gray-500 font-medium">{t.date}</span>
+        <span className="text-xs font-bold text-neutral-800 dark:text-gray-200">{t.name}</span>
+        <span className="text-[10px] text-neutral-500 font-medium">{t.date}</span>
       </div>
-      <div className={`flex items-center font-bold text-xs tracking-wide ${t.type === 'income' ? 'text-emerald-400' : 'text-rose-400'}`}>
+      <div className={`flex items-center font-bold text-xs tracking-wide ${t.type === 'income' ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}`}>
         {t.type === 'income' ? <FiArrowUpRight className="mr-0.5 opacity-80" size={12}/> : <FiArrowDownRight className="mr-0.5 opacity-80" size={12}/>}
         ₹{Number(t.amount).toLocaleString('en-IN')}
       </div>
@@ -61,41 +61,41 @@ export default function PlaygroundWidget() {
   );
 
   return (
-    <div className="flex flex-col w-full bg-[#080808] backdrop-blur-3xl rounded-[inherit] overflow-hidden shadow-2xl">
+    <div className="flex flex-col w-full bg-white dark:bg-[#080808] backdrop-blur-3xl rounded-[inherit] overflow-hidden shadow-2xl transition-colors duration-300">
       
       {/* Top Header & Balance */}
-      <div className="p-5 border-b border-[#222]">
+      <div className="p-5 border-b border-neutral-200 dark:border-[#222]">
         <div className="flex justify-between items-start mb-5">
           <div className="flex items-center gap-2">
             <div className="p-1.5 bg-emerald-500/10 rounded-md border border-emerald-500/20 shadow-[0_0_15px_rgba(16,185,129,0.15)]">
-              <FiActivity className="text-emerald-500 text-sm" />
+              <FiActivity className="text-emerald-600 dark:text-emerald-500 text-sm" />
             </div>
             <div className="flex flex-col">
               <div className="flex items-center gap-1.5">
-                <span className="text-white font-bold text-[13px] tracking-wide">Live Sandbox</span>
-                <span className="text-[8px] font-bold text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded border border-emerald-500/20 tracking-widest uppercase shadow-sm">Demo</span>
+                <span className="text-neutral-800 dark:text-white font-bold text-[13px] tracking-wide">Live Sandbox</span>
+                <span className="text-[8px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded border border-emerald-500/20 tracking-widest uppercase shadow-sm">Demo</span>
               </div>
             </div>
           </div>
           <div className="text-right">
-            <p className="text-gray-500 text-[9px] uppercase tracking-widest font-bold mb-0.5">Net Position</p>
-            <p className="text-white font-bold text-xl tabular-nums tracking-tight">₹{currentBalance.toLocaleString('en-IN')}</p>
+            <p className="text-neutral-400 dark:text-gray-500 text-[9px] uppercase tracking-widest font-bold mb-0.5">Net Position</p>
+            <p className="text-neutral-800 dark:text-white font-bold text-xl tabular-nums tracking-tight">₹{currentBalance.toLocaleString('en-IN')}</p>
           </div>
         </div>
         
         <form onSubmit={handleAdd} className="space-y-3 relative z-20">
-          <div className="flex bg-[#111] p-1 rounded-xl border border-[#333] shadow-inner">
+          <div className="flex bg-neutral-100 dark:bg-[#111] p-1 rounded-xl border border-neutral-200 dark:border-[#333] shadow-inner">
             <button 
               type="button" 
               onClick={() => setType("expense")} 
-              className={`flex-1 py-1.5 text-xs font-bold rounded-lg transition-all ${type === 'expense' ? 'bg-[#222] text-rose-400 shadow-md border border-[#333]' : 'text-gray-500 hover:text-gray-300'}`}
+              className={`flex-1 py-1.5 text-xs font-bold rounded-lg transition-all ${type === 'expense' ? 'bg-white dark:bg-[#222] text-rose-600 dark:text-rose-400 shadow-md border border-neutral-300 dark:border-[#333]' : 'text-neutral-500 dark:text-gray-500 hover:text-neutral-700 dark:hover:text-gray-300'}`}
             >
               Expense
             </button>
             <button 
               type="button" 
               onClick={() => setType("income")} 
-              className={`flex-1 py-1.5 text-xs font-bold rounded-lg transition-all ${type === 'income' ? 'bg-[#222] text-emerald-400 shadow-md border border-[#333]' : 'text-gray-500 hover:text-gray-300'}`}
+              className={`flex-1 py-1.5 text-xs font-bold rounded-lg transition-all ${type === 'income' ? 'bg-white dark:bg-[#222] text-emerald-600 dark:text-emerald-400 shadow-md border border-neutral-300 dark:border-[#333]' : 'text-neutral-500 dark:text-gray-500 hover:text-neutral-700 dark:hover:text-gray-300'}`}
             >
               Income
             </button>
@@ -107,17 +107,17 @@ export default function PlaygroundWidget() {
               placeholder="E.g. Lunch" 
               value={name} 
               onChange={e=>setName(e.target.value)} 
-              className="w-full bg-[#111] border border-[#333] rounded-xl px-3 py-2 text-xs font-medium text-white placeholder-gray-600 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all shadow-inner" 
+              className="w-full bg-white dark:bg-[#111] border border-neutral-300 dark:border-[#333] rounded-xl px-3 py-2 text-xs font-medium text-neutral-800 dark:text-white placeholder-neutral-400 dark:placeholder-gray-600 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all shadow-inner" 
               autoComplete="off"
             />
             <div className="relative w-24 shrink-0">
-              <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-500 text-xs font-bold">₹</span>
+              <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-neutral-500 dark:text-gray-500 text-xs font-bold">₹</span>
               <input 
                 type="number" 
                 placeholder="400" 
                 value={amount} 
                 onChange={e=>setAmount(e.target.value)} 
-                className="w-full bg-[#111] border border-[#333] rounded-xl pl-6 pr-2 py-2 text-xs font-medium text-white placeholder-gray-600 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all shadow-inner" 
+                className="w-full bg-white dark:bg-[#111] border border-neutral-300 dark:border-[#333] rounded-xl pl-6 pr-2 py-2 text-xs font-medium text-neutral-800 dark:text-white placeholder-neutral-400 dark:placeholder-gray-600 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all shadow-inner" 
               />
             </div>
           </div>
@@ -132,13 +132,13 @@ export default function PlaygroundWidget() {
       </div>
 
       {/* Feed */}
-      <div className="flex flex-col flex-1 p-5 relative bg-[#050505] min-h-[220px]">
+      <div className="flex flex-col flex-1 p-5 relative bg-neutral-50 dark:bg-[#050505] min-h-[220px]">
         {/* Subtle noise overlay specifically for the feed section */}
         <div className="absolute inset-0 opacity-[0.03] mix-blend-overlay pointer-events-none" style={{ backgroundImage: 'url("https://grainy-gradients.vercel.app/noise.svg")' }}></div>
         
-        <h4 className="text-gray-500 text-[10px] font-bold uppercase tracking-widest mb-3 flex items-center gap-2 relative z-10">
+        <h4 className="text-neutral-400 dark:text-gray-500 text-[10px] font-bold uppercase tracking-widest mb-3 flex items-center gap-2 relative z-10">
           Last 5 Transactions
-          <div className="flex-1 h-px bg-[#222]"></div>
+          <div className="flex-1 h-px bg-neutral-200 dark:bg-[#222]"></div>
         </h4>
         
         <div className="space-y-2 relative z-10 flex flex-col justify-end">

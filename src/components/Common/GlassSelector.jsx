@@ -1,7 +1,19 @@
 import { Listbox } from "@headlessui/react";
 import { FiChevronDown } from "react-icons/fi";
 
+const accentStyles = {
+  emerald: {
+    ring: "focus:ring-emerald-400/40",
+    selected: "font-semibold text-emerald-300",
+  },
+  rose: {
+    ring: "focus:ring-rose-400/40",
+    selected: "font-semibold text-rose-300",
+  },
+};
+
 function GlassSelect({ label, value, onChange, options, accent = "emerald" }) {
+  const styles = accentStyles[accent] || accentStyles.emerald;
   const selectedLabel =
     options.find(o => o.value === value)?.label || "Select category";
 
@@ -20,7 +32,7 @@ function GlassSelect({ label, value, onChange, options, accent = "emerald" }) {
               text-white
               transition-all duration-200
               focus:outline-none
-              focus:ring-2 focus:ring-${accent}-400/40
+              focus:ring-2 ${styles.ring}
             `}
           >
             <span className={value ? "text-white" : "text-gray-400"}>
@@ -33,7 +45,7 @@ function GlassSelect({ label, value, onChange, options, accent = "emerald" }) {
             className="
               absolute z-50 mt-2 w-full
               rounded-xl
-              bg-zinc-900/95 backdrop-blur-xl
+              bg-neutral-900/95 backdrop-blur-xl
               border border-white/15
               shadow-2xl
               overflow-hidden
@@ -44,21 +56,12 @@ function GlassSelect({ label, value, onChange, options, accent = "emerald" }) {
                 key={option.value}
                 value={option.value}
                 className={({ active }) =>
-                  `
-                    cursor-pointer px-4 py-3 text-sm
-                    transition-colors
-                    ${active ? "bg-white/10 text-white" : "text-gray-300"}
-                  `
+                  `cursor-pointer px-4 py-3 text-sm transition-colors
+                  ${active ? "bg-white/10 text-white" : "text-gray-300"}`
                 }
               >
                 {({ selected }) => (
-                  <span
-                    className={
-                      selected
-                        ? `font-semibold text-${accent}-300`
-                        : ""
-                    }
-                  >
+                  <span className={selected ? styles.selected : ""}>
                     {option.label}
                   </span>
                 )}

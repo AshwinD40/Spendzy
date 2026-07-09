@@ -31,22 +31,20 @@ export default function AuthModal({ isOpen, onClose }) {
                 leaveFrom="translate-x-0"
                 leaveTo="translate-x-full"
               >
-                <Dialog.Panel className="pointer-events-auto w-screen max-w-md relative">
-                  <div className="absolute inset-0 bg-[#0a0a0a] shadow-[0_0_80px_rgba(0,0,0,0.8)] overflow-y-auto custom-scrollbar border-l border-white/10">
-                    <div className="flex flex-col min-h-full p-6 sm:p-8">
-                      <div className="flex items-center justify-end mb-4">
-                        <button
-                          type="button"
-                          className="rounded-full p-2 text-gray-400 hover:text-white hover:bg-white/10 transition z-10"
-                          onClick={onClose}
-                        >
-                          <FiX className="h-6 w-6" />
-                        </button>
-                      </div>
+                <Dialog.Panel className="pointer-events-auto w-screen max-w-md bg-white dark:bg-[#0a0a0a] shadow-[0_0_80px_rgba(0,0,0,0.8)] border-l border-neutral-200 dark:border-white/10 h-full flex flex-col">
+                  <div className="flex-1 overflow-y-auto custom-scrollbar p-6 sm:p-8 flex flex-col">
+                    <div className="flex items-center justify-end mb-4">
+                      <button
+                        type="button"
+                        className="rounded-full p-2 text-neutral-500 dark:text-gray-400 hover:text-neutral-800 dark:hover:text-white hover:bg-neutral-200 dark:hover:bg-white/10 transition z-10"
+                        onClick={onClose}
+                      >
+                        <FiX className="h-6 w-6" />
+                      </button>
+                    </div>
 
-                      <div className="flex-1 flex flex-col justify-center w-full">
-                        <SignupSignin />
-                      </div>
+                    <div className="flex-1 flex flex-col justify-center w-full">
+                      <SignupSignin />
                     </div>
                   </div>
                 </Dialog.Panel>

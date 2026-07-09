@@ -8,7 +8,7 @@ function Input({ label, state, setState, placeholder, type = "text" }) {
       <label className="
         text-[10px] sm:text-xs
         uppercase tracking-widest
-        text-gray-400
+        text-neutral-500 dark:text-gray-400
       ">
         {label}
       </label>
@@ -22,19 +22,19 @@ function Input({ label, state, setState, placeholder, type = "text" }) {
         className="
           w-full
           rounded-lg sm:rounded-xl
-          bg-white/10
+          bg-white dark:bg-white/10
           backdrop-blur-2xl
-          border border-white/15
+          border border-neutral-300 dark:border-white/15
           px-3.5 sm:px-4
           py-2.5 sm:py-3
           text-sm sm:text-base
-          text-white
-          placeholder:text-gray-400
+          text-neutral-800 dark:text-white
+          placeholder:text-neutral-400 dark:placeholder:text-gray-400
           outline-none
           transition-all duration-200
-          focus:border-blue-400/60
-          focus:bg-white/15
-          focus:shadow-[0_0_0_3px_rgba(59,130,246,0.25)]
+          focus:border-emerald-500/60 dark:focus:border-emerald-400/60
+          focus:bg-white
+          focus:shadow-[0_0_0_3px_rgba(16,185,129,0.15)] dark:focus:shadow-[0_0_0_3px_rgba(16,185,129,0.25)]
         "
       />
     </div>

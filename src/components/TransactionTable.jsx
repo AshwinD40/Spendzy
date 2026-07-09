@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import {
   flexRender,
   useReactTable,
@@ -11,7 +11,7 @@ import toast from "react-hot-toast";
 
 const PAGE_SIZE = 10;
 
-function TransactionTable({ transactions, addTransaction }) {
+function TransactionTable({ transactions, addTransaction, currency = "₹" }) {
   const [search, setSearch] = useState("");
   const [typeFilter, setTypeFilter] = useState("all");
   const [sortKey, setSortKey] = useState("");
@@ -95,6 +95,7 @@ function TransactionTable({ transactions, addTransaction }) {
         header: true,
         complete: async ({ data }) => {
           for (const row of data) {
+            if (!row.name || !row.amount) continue;
             await addTransaction(
               { ...row, amount: Number(row.amount) },
               true
@@ -112,23 +113,21 @@ function TransactionTable({ transactions, addTransaction }) {
     () => [
       {
         header: "No",
-        cell: ({table, row }) => {
+        cell: ({ table, row }) => {
           const { pageIndex, pageSize } = table.getState().pagination;
-
           const visibleIndex = table.getRowModel().rows.findIndex(r => r.id === row.id);
-
           return (
-            <span className="text-xs font-medium text-gray-200 tabular-nums">
-              { pageIndex * pageSize + visibleIndex + 1 }
+            <span className="text-xs font-medium text-neutral-500 dark:text-neutral-400 tabular-nums">
+              {pageIndex * pageSize + visibleIndex + 1}
             </span>
-          )
+          );
         }
       },
       {
         header: "Name",
         accessorKey: "name",
         cell: (info) => (
-          <span className="text-sm font-medium text-gray-200">
+          <span className="text-sm font-semibold text-neutral-800 dark:text-neutral-200">
             {info.getValue()}
           </span>
         ),
@@ -141,10 +140,10 @@ function TransactionTable({ transactions, addTransaction }) {
           return (
             <span
               className={`text-sm font-bold tabular-nums ${
-                isIncome ? "text-emerald-400" : "text-rose-400"
+                isIncome ? "text-emerald-600 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400"
               }`}
             >
-              ₹ {Number(info.getValue()).toLocaleString("en-IN")}
+              {currency} {Number(info.getValue()).toLocaleString("en-IN")}
             </span>
           );
         },
@@ -154,11 +153,11 @@ function TransactionTable({ transactions, addTransaction }) {
         accessorKey: "tag",
         cell: (info) => (
           <span
-            className={`text-[11px] font-semibold uppercase tracking-wide
-            px-2.5 py-1 rounded-full backdrop-blur-sm border ${
+            className={`text-[10px] font-bold uppercase tracking-wider
+            px-2 py-0.5 rounded-full border ${
               info.getValue()
-                ? "bg-emerald-400/20 border-emerald-400/30 text-emerald-300"
-                : "bg-rose-400/20 border-rose-400/30 text-rose-300"
+                ? "bg-emerald-50 dark:bg-emerald-500/10 border-emerald-500/20 text-emerald-700 dark:text-emerald-400"
+                : "bg-rose-50 dark:bg-rose-500/10 border-rose-500/20 text-rose-700 dark:text-rose-400"
             }`}
           >
             {info.getValue() || "—"}
@@ -172,11 +171,11 @@ function TransactionTable({ transactions, addTransaction }) {
           const isIncome = info.getValue() === "income";
           return (
             <span
-              className={`text-[11px] font-semibold uppercase tracking-wide
+              className={`text-[10px] font-bold uppercase tracking-wider
               px-2 py-0.5 rounded-full ${
                 isIncome
-                  ? "bg-emerald-400/15 text-emerald-400"
-                  : "bg-rose-400/15 text-rose-400"
+                  ? "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400"
+                  : "bg-rose-50 dark:bg-rose-500/10 text-rose-700 dark:text-rose-400"
               }`}
             >
               {info.getValue()}
@@ -188,7 +187,7 @@ function TransactionTable({ transactions, addTransaction }) {
         header: "Date",
         accessorKey: "date",
         cell: (info) => (
-          <span className="text-xs text-gray-400">
+          <span className="text-xs font-semibold text-neutral-400 dark:text-neutral-400">
             {info.getValue()}
           </span>
         ),
@@ -196,7 +195,6 @@ function TransactionTable({ transactions, addTransaction }) {
     ],
     []
   );
-
 
   const table = useReactTable({
     data: processedData,
@@ -209,40 +207,39 @@ function TransactionTable({ transactions, addTransaction }) {
     getPaginationRowModel: getPaginationRowModel(),
   });
 
-  /* ---------------- UI ---------------- */
   return (
     <div className="w-full space-y-6">
-      {/* Filters */}
-      <div className="relative rounded-2xl sm:rounded-3xl p-[1px] bg-gradient-to-br from-black/20 via-black/10 to-transparent shadow-xl">
+      
+      <div className="relative rounded-2xl sm:rounded-3xl p-[1px] bg-gradient-to-br from-neutral-200/60 dark:from-neutral-800/40 via-neutral-100 dark:via-neutral-900/10 to-transparent shadow-sm">
         <div
           className="rounded-2xl sm:rounded-3xl 
-          bg-white/10 backdrop-blur-xl 
-          border border-white/20 
+          bg-white dark:bg-neutral-900 
+          border border-neutral-200/80 dark:border-neutral-800/80 
           p-3 sm:p-5 space-y-3 sm:space-y-5"
         >
-          {/* Top Row */}
+          {/* Top Row: Search and Type selector */}
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-between">
 
-            {/* Search */}
+            {/* Search Input */}
             <div className="relative w-full sm:max-w-xs">
-              <BiSearch className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 text-white/60 text-sm" />
+              <BiSearch className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 text-neutral-400 dark:text-neutral-500 text-sm" />
               <input
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                placeholder="Search"
+                placeholder="Search description..."
                 className="w-full pl-9 sm:pl-11 pr-3 sm:pr-4 
                 py-2 sm:py-2.5 
                 rounded-xl sm:rounded-2xl
-                bg-white/10 backdrop-blur-md 
-                border border-white/20 
-                text-white text-sm
-                placeholder-white/50
-                focus:outline-none focus:ring-2 focus:ring-white/30
-                transition"
+                bg-neutral-50 dark:bg-neutral-950
+                border border-neutral-300 dark:border-neutral-800
+                text-neutral-800 dark:text-neutral-200 text-sm
+                placeholder-neutral-400 dark:placeholder-neutral-500
+                focus:outline-none focus:ring-2 focus:ring-emerald-500/20 dark:focus:ring-emerald-500/20 focus:border-emerald-500 dark:focus:border-emerald-500
+                transition-all duration-200"
               />
             </div>
 
-            {/* Type Selector */}
+            {/* Type Selector Dropdown */}
             <div className="relative w-full sm:w-auto">
               <select
                 value={typeFilter}
@@ -250,24 +247,24 @@ function TransactionTable({ transactions, addTransaction }) {
                 className="w-full appearance-none
                 rounded-xl sm:rounded-2xl 
                 px-3 sm:px-4 py-2 sm:py-2.5 pr-9 sm:pr-10
-                bg-white/10 backdrop-blur-md 
-                border border-white/20
-                text-white text-sm
-                focus:outline-none focus:ring-2 focus:ring-white/30
-                transition"
+                bg-neutral-50 dark:bg-neutral-950
+                border border-neutral-300 dark:border-neutral-800
+                text-neutral-800 dark:text-neutral-200 text-sm
+                focus:outline-none focus:ring-2 focus:ring-emerald-500/20 dark:focus:ring-emerald-500/20 focus:border-emerald-500 dark:focus:border-emerald-500
+                transition-all duration-200"
               >
-                <option className="bg-black text-white" value="all">All</option>
-                <option className="bg-black text-white" value="income">Income</option>
-                <option className="bg-black text-white" value="expense">Expense</option>
+                <option className="bg-white dark:bg-neutral-900 text-neutral-800 dark:text-neutral-200" value="all">All Types</option>
+                <option className="bg-white dark:bg-neutral-900 text-neutral-800 dark:text-neutral-200" value="income">Income</option>
+                <option className="bg-white dark:bg-neutral-900 text-neutral-800 dark:text-neutral-200" value="expense">Expense</option>
               </select>
 
-              <span className="pointer-events-none absolute right-3 sm:right-4 top-1/2 -translate-y-1/2 text-white/60 text-xs">
+              <span className="pointer-events-none absolute right-3 sm:right-4 top-1/2 -translate-y-1/2 text-neutral-400 dark:text-neutral-500 text-[10px]">
                 ▼
               </span>
             </div>
           </div>
 
-          {/* Bottom Row */}
+          {/* Bottom Row: Sort keys and CSV operations */}
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-between">
 
             {/* Sort Buttons */}
@@ -277,12 +274,12 @@ function TransactionTable({ transactions, addTransaction }) {
                   key={key}
                   onClick={() => handleDateSort(key)}
                   className={`flex-1 sm:flex-none px-3 sm:px-4 py-1.5 sm:py-2 
-                  rounded-lg sm:rounded-xl text-xs font-medium
-                  backdrop-blur-md border transition-all
+                  rounded-lg sm:rounded-xl text-xs font-semibold
+                  border transition-all duration-200
                   ${
                     sortKey === key
-                      ? "bg-white/25 border-white/40 text-white shadow-inner"
-                      : "bg-white/10 border-white/20 text-white/60 hover:bg-white/15"
+                      ? "bg-neutral-200 dark:bg-neutral-800 border-neutral-300 dark:border-neutral-700 text-neutral-800 dark:text-white shadow-inner"
+                      : "bg-neutral-50 dark:bg-neutral-950 border-neutral-200 dark:border-neutral-800 text-neutral-500 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-900"
                   }`}
                 >
                   {key === "date" ? "Date" : "Amount"}
@@ -295,20 +292,20 @@ function TransactionTable({ transactions, addTransaction }) {
               ))}
             </div>
 
-            {/* CSV Actions – desktop only */}
+            {/* CSV Actions */}
             <div className="hidden sm:flex gap-2">
               <button
                 onClick={exportCSV}
-                className="px-4 py-2 rounded-xl text-sm font-medium
-                bg-white/20 backdrop-blur-md border border-white/30
-                text-white hover:bg-white/30 transition"
+                className="px-4 py-2 rounded-xl text-sm font-semibold
+                bg-neutral-50 dark:bg-neutral-950 border border-neutral-300 dark:border-neutral-800
+                text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-900 transition-all duration-200"
               >
                 Export CSV
               </button>
 
-              <label className="px-4 py-2 rounded-xl text-sm font-medium
-                bg-white/20 backdrop-blur-md border border-white/30
-                text-white cursor-pointer hover:bg-white/30 transition">
+              <label className="px-4 py-2 rounded-xl text-sm font-semibold
+                bg-neutral-50 dark:bg-neutral-950 border border-neutral-300 dark:border-neutral-800
+                text-neutral-600 dark:text-neutral-300 cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-900 transition-all duration-200">
                 Import CSV
                 <input type="file" accept=".csv" hidden onChange={importCSV} />
               </label>
@@ -317,26 +314,21 @@ function TransactionTable({ transactions, addTransaction }) {
         </div>
       </div>
 
-      {/* Table */}
       <div
-        className=" rounded-2xl bg-gradient-to-b from-white/[0.10] via-white/[0.05] to-white/[0.02] backdrop-blur-[36px] border border-white/20 shadow-[0_40px_120px_rgba(0,0,0,0.55)] relative overflow-hidden "
+        className="rounded-2xl bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800/80 shadow-md dark:shadow-[0_20px_50px_rgba(0,0,0,0.35)] relative overflow-hidden"
       >
-        {/* inner highlight */}
-        <div className="absolute inset-0 rounded-2xl ring-1 ring-inset ring-white/10 pointer-events-none" />
-
-
         <div className="overflow-x-auto">
           <table className="min-w-[760px] w-full border-collapse">
-            <thead className="bg-white/[0.06]">
+            <thead className="bg-neutral-50 dark:bg-neutral-950">
               {table.getHeaderGroups().map((hg) => (
                 <tr
                   key={hg.id}
-                  className="border-b border-white/10"
+                  className="border-b border-neutral-200 dark:border-neutral-800/85"
                 >
                   {hg.headers.map((h) => (
                     <th
                       key={h.id}
-                      className=" px-4 py-3 text-left text-[11px] font-semibold uppercase tracking-wider text-gray-300 "
+                      className="px-4 py-3 text-left text-[10px] font-bold uppercase tracking-wider text-neutral-500 dark:text-neutral-400"
                     >
                       {h.column.columnDef.header}
                     </th>
@@ -349,11 +341,10 @@ function TransactionTable({ transactions, addTransaction }) {
               {table.getRowModel().rows.map((row) => (
                 <tr
                   key={row.id}
-                  className=" border-b border-white/10 hover:bg-white/[0.08] hover:shadow-[0_8px_30px_rgba(0,0,0,0.35)] transition-all duration-150 "
+                  className="border-b border-neutral-100 dark:border-neutral-800/80 hover:bg-neutral-50/80 dark:hover:bg-neutral-950/85 transition-all duration-150"
                 >
-                 
                   {row.getVisibleCells().map((cell) => (
-                    <td key={cell.id} className="px-4 py-3" >
+                    <td key={cell.id} className="px-4 py-3">
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()
@@ -366,7 +357,7 @@ function TransactionTable({ transactions, addTransaction }) {
           </table>
         </div>
 
-        <div className=" flex items-center justify-between px-4 py-3 border-t border-white/10 text-xs text-gray-400" >
+        <div className="flex items-center justify-between px-4 py-3 border-t border-neutral-200 dark:border-neutral-800/80 text-xs text-neutral-500 dark:text-neutral-400 font-semibold">
           <span>
             Page {table.getState().pagination.pageIndex + 1} of{" "}
             {table.getPageCount()}
@@ -376,14 +367,14 @@ function TransactionTable({ transactions, addTransaction }) {
             <button
               disabled={!table.getCanPreviousPage()}
               onClick={() => table.previousPage()}
-              className=" px-3 py-1.5 rounded-lg bg-white/10 border border-white/15 text-gray-200 hover:bg-white/20 disabled:opacity-40 transition "
+              className="px-3 py-1.5 rounded-lg bg-neutral-50 dark:bg-neutral-950 border border-neutral-300 dark:border-neutral-800 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-900 disabled:opacity-40 transition-all duration-200"
             >
               Prev
             </button>
             <button
               disabled={!table.getCanNextPage()}
               onClick={() => table.nextPage()}
-              className=" px-3 py-1.5 rounded-lg bg-white/10 border border-white/15 text-gray-200 hover:bg-white/20 disabled:opacity-40  transition "
+              className="px-3 py-1.5 rounded-lg bg-neutral-50 dark:bg-neutral-950 border border-neutral-300 dark:border-neutral-800 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-900 disabled:opacity-40 transition-all duration-200"
             >
               Next
             </button>
