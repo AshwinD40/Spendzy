@@ -35,43 +35,6 @@ Spendzy is a premium, high-performance personal finance manager designed with a 
 
 ---
 
-## 📂 Project Structure
-
-```text
-spendzy/
-├── public/                 # Static assets & public icons
-├── src/
-│   ├── Layout/
-│   │   ├── MainAppLayout.jsx # Command center, settings modal, global states
-│   │   └── Sidebar.jsx       # Side navbar and responsive drawer navigation
-│   ├── components/
-│   │   ├── Common/           # Reusable UI inputs, cards, toggle switches, selectors
-│   │   ├── Modal/            # Add Income, Add Expense, Auth dialogs
-│   │   ├── Charts.jsx        # Data visualization logic using Recharts
-│   │   ├── PlaygroundWidget.jsx # Interactive landing-page mock sandbox
-│   │   ├── SignupSignin.jsx  # OAuth & Email Auth controller
-│   │   └── TransactionTable.jsx # TanStack list with search, sorting, and pagination
-│   ├── hooks/
-│   │   └── useTheme.js       # Custom theme hook for dark/light state persisted in localStorage
-│   ├── pages/
-│   │   ├── Views/            # Dashboard subviews (Overview, Transactions, Budgets)
-│   │   ├── Home.jsx          # Landing page with live demo widget
-│   │   ├── Features.jsx      # Product features overview
-│   │   ├── Customers.jsx     # client testimonials page
-│   │   ├── Pricing.jsx       # Pricing tiers
-│   │   ├── Signup.jsx        # Auth view layout
-│   │   └── NotFound.jsx      # Custom error layout
-│   ├── App.jsx               # Navigation routes and layout wrappers
-│   ├── firebase.js           # Firebase app initialization config
-│   ├── index.css             # Base styles, global variables, and scrollbars
-│   └── main.jsx              # App mount point
-├── vercel.json             # Vercel deployment configuration
-├── vite.config.js          # Vite config bundling Tailwind and React
-└── package.json            # Scripts and dependencies
-```
-
----
-
 ## ⚙️ Installation & Setup
 
 ### 1. Clone the Repository
