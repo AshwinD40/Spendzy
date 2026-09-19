@@ -11,7 +11,11 @@ import toast from "react-hot-toast";
 
 const PAGE_SIZE = 10;
 
-function TransactionTable({ transactions, addTransaction, currency = "₹" }) {
+export default function TransactionTable({
+  transactions = [],
+  addTransaction,
+  currency = "₹",
+}) {
   const [search, setSearch] = useState("");
   const [typeFilter, setTypeFilter] = useState("all");
   const [sortKey, setSortKey] = useState("");
@@ -28,7 +32,7 @@ function TransactionTable({ transactions, addTransaction, currency = "₹" }) {
         setSortOrder((prev) => (prev === "asc" ? "desc" : "asc"));
       } else {
         setSortKey("date");
-        setSortOrder("asc"); // default
+        setSortOrder("asc");
       }
     }
 
@@ -47,12 +51,11 @@ function TransactionTable({ transactions, addTransaction, currency = "₹" }) {
 
     data = data.filter((t) => {
       const matchesSearch = t.name
-        .toLowerCase()
+        ?.toLowerCase()
         .includes(search.toLowerCase());
 
       const matchesType =
-        typeFilter === "all" ||
-        normalizeType(t.type) === typeFilter;
+        typeFilter === "all" || normalizeType(t.type) === typeFilter;
 
       return matchesSearch && matchesType;
     });
@@ -73,7 +76,6 @@ function TransactionTable({ transactions, addTransaction, currency = "₹" }) {
 
     return data;
   }, [transactions, search, typeFilter, sortKey, sortOrder]);
-
 
   function exportCSV() {
     const csv = unparse(processedData, {
@@ -101,66 +103,22 @@ function TransactionTable({ transactions, addTransaction, currency = "₹" }) {
               true
             );
           }
+          toast.success("CSV Imported!");
         },
       });
-      toast.success("CSV imported successfully");
     } catch {
-      toast.error("Error importing CSV");
+      toast.error("Couldn't import CSV");
     }
   }
 
   const columns = useMemo(
     () => [
       {
-        header: "No",
-        cell: ({ table, row }) => {
-          const { pageIndex, pageSize } = table.getState().pagination;
-          const visibleIndex = table.getRowModel().rows.findIndex(r => r.id === row.id);
-          return (
-            <span className="text-xs font-medium text-neutral-500 dark:text-neutral-400 tabular-nums">
-              {pageIndex * pageSize + visibleIndex + 1}
-            </span>
-          );
-        }
-      },
-      {
         header: "Name",
         accessorKey: "name",
         cell: (info) => (
-          <span className="text-sm font-semibold text-neutral-800 dark:text-neutral-200">
+          <span className="font-medium text-xs text-neutral-800 dark:text-neutral-200">
             {info.getValue()}
-          </span>
-        ),
-      },
-      {
-        header: "Amount",
-        accessorKey: "amount",
-        cell: (info) => {
-          const isIncome = info.row.original.type === "income";
-          return (
-            <span
-              className={`text-sm font-bold tabular-nums ${
-                isIncome ? "text-emerald-600 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400"
-              }`}
-            >
-              {currency} {Number(info.getValue()).toLocaleString("en-IN")}
-            </span>
-          );
-        },
-      },
-      {
-        header: "Tag",
-        accessorKey: "tag",
-        cell: (info) => (
-          <span
-            className={`text-[10px] font-bold uppercase tracking-wider
-            px-2 py-0.5 rounded-full border ${
-              info.getValue()
-                ? "bg-emerald-50 dark:bg-emerald-500/10 border-emerald-500/20 text-emerald-700 dark:text-emerald-400"
-                : "bg-rose-50 dark:bg-rose-500/10 border-rose-500/20 text-rose-700 dark:text-rose-400"
-            }`}
-          >
-            {info.getValue() || "—"}
           </span>
         ),
       },
@@ -168,17 +126,49 @@ function TransactionTable({ transactions, addTransaction, currency = "₹" }) {
         header: "Type",
         accessorKey: "type",
         cell: (info) => {
-          const isIncome = info.getValue() === "income";
+          const type = normalizeType(info.getValue());
           return (
             <span
-              className={`text-[10px] font-bold uppercase tracking-wider
-              px-2 py-0.5 rounded-full ${
-                isIncome
-                  ? "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400"
-                  : "bg-rose-50 dark:bg-rose-500/10 text-rose-700 dark:text-rose-400"
+              className={`inline-block px-2 py-0.5 rounded text-[10px] font-medium ${
+                type === "income"
+                  ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400"
+                  : "bg-rose-50 text-rose-700 dark:bg-rose-950/40 dark:text-rose-400"
               }`}
             >
-              {info.getValue()}
+              {type === "income" ? "Income" : "Expense"}
+            </span>
+          );
+        },
+      },
+      {
+        header: "Amount",
+        accessorKey: "amount",
+        cell: (info) => {
+          const type = normalizeType(info.row.original.type);
+          const isIncome = type === "income";
+          return (
+            <span
+              className={`font-semibold text-xs tabular-nums ${
+                isIncome
+                  ? "text-emerald-600 dark:text-emerald-400"
+                  : "text-neutral-900 dark:text-neutral-100"
+              }`}
+            >
+              {isIncome ? "+" : "-"}
+              {currency}
+              {Number(info.getValue()).toLocaleString("en-IN")}
+            </span>
+          );
+        },
+      },
+      {
+        header: "Tag",
+        accessorKey: "tag",
+        cell: (info) => {
+          const val = info.getValue();
+          return (
+            <span className="inline-block px-2 py-0.5 rounded text-[10px] font-medium bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400">
+              {val || "General"}
             </span>
           );
         },
@@ -187,13 +177,13 @@ function TransactionTable({ transactions, addTransaction, currency = "₹" }) {
         header: "Date",
         accessorKey: "date",
         cell: (info) => (
-          <span className="text-xs font-semibold text-neutral-400 dark:text-neutral-400">
+          <span className="text-xs text-neutral-400 dark:text-neutral-500">
             {info.getValue()}
           </span>
         ),
       },
     ],
-    []
+    [currency]
   );
 
   const table = useReactTable({
@@ -208,83 +198,49 @@ function TransactionTable({ transactions, addTransaction, currency = "₹" }) {
   });
 
   return (
-    <div className="w-full space-y-6">
-      
-      <div className="relative rounded-2xl sm:rounded-3xl p-[1px] bg-gradient-to-br from-neutral-200/60 dark:from-neutral-800/40 via-neutral-100 dark:via-neutral-900/10 to-transparent shadow-sm">
-        <div
-          className="rounded-2xl sm:rounded-3xl 
-          bg-white dark:bg-neutral-900 
-          border border-neutral-200/80 dark:border-neutral-800/80 
-          p-3 sm:p-5 space-y-3 sm:space-y-5"
-        >
-          {/* Top Row: Search and Type selector */}
-          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-between">
+    <div className="w-full space-y-4">
+      <div className="rounded-2xl bg-white dark:bg-neutral-900/40 border border-neutral-200/80 dark:border-neutral-800 p-4 space-y-3 shadow-2xs">
+        <div className="flex flex-col sm:flex-row gap-3 justify-between">
+          <div className="relative w-full sm:max-w-xs">
+            <BiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400 text-sm pointer-events-none" />
+            <input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search description..."
+              className="w-full pl-9 pr-3 h-9 rounded-xl bg-neutral-50/50 dark:bg-neutral-950/50 border border-neutral-200 dark:border-neutral-800 text-neutral-800 dark:text-neutral-200 text-xs placeholder-neutral-400 dark:placeholder-neutral-500 focus:outline-none focus:border-emerald-500 transition-all"
+            />
+          </div>
 
-            {/* Search Input */}
-            <div className="relative w-full sm:max-w-xs">
-              <BiSearch className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 text-neutral-400 dark:text-neutral-500 text-sm" />
-              <input
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder="Search description..."
-                className="w-full pl-9 sm:pl-11 pr-3 sm:pr-4 
-                py-2 sm:py-2.5 
-                rounded-xl sm:rounded-2xl
-                bg-neutral-50 dark:bg-neutral-950
-                border border-neutral-300 dark:border-neutral-800
-                text-neutral-800 dark:text-neutral-200 text-sm
-                placeholder-neutral-400 dark:placeholder-neutral-500
-                focus:outline-none focus:ring-2 focus:ring-emerald-500/20 dark:focus:ring-emerald-500/20 focus:border-emerald-500 dark:focus:border-emerald-500
-                transition-all duration-200"
-              />
-            </div>
-
-            {/* Type Selector Dropdown */}
+          <div className="flex items-center gap-2">
             <div className="relative w-full sm:w-auto">
               <select
                 value={typeFilter}
                 onChange={(e) => setTypeFilter(e.target.value)}
-                className="w-full appearance-none
-                rounded-xl sm:rounded-2xl 
-                px-3 sm:px-4 py-2 sm:py-2.5 pr-9 sm:pr-10
-                bg-neutral-50 dark:bg-neutral-950
-                border border-neutral-300 dark:border-neutral-800
-                text-neutral-800 dark:text-neutral-200 text-sm
-                focus:outline-none focus:ring-2 focus:ring-emerald-500/20 dark:focus:ring-emerald-500/20 focus:border-emerald-500 dark:focus:border-emerald-500
-                transition-all duration-200"
+                className="w-full appearance-none rounded-xl px-3 pr-8 h-9 bg-neutral-50/50 dark:bg-neutral-950/50 border border-neutral-200 dark:border-neutral-800 text-neutral-800 dark:text-neutral-200 text-xs focus:outline-none focus:border-emerald-500 transition cursor-pointer"
               >
-                <option className="bg-white dark:bg-neutral-900 text-neutral-800 dark:text-neutral-200" value="all">All Types</option>
-                <option className="bg-white dark:bg-neutral-900 text-neutral-800 dark:text-neutral-200" value="income">Income</option>
-                <option className="bg-white dark:bg-neutral-900 text-neutral-800 dark:text-neutral-200" value="expense">Expense</option>
+                <option value="all">All Types</option>
+                <option value="income">Income</option>
+                <option value="expense">Expense</option>
               </select>
-
-              <span className="pointer-events-none absolute right-3 sm:right-4 top-1/2 -translate-y-1/2 text-neutral-400 dark:text-neutral-500 text-[10px]">
+              <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 text-[10px]">
                 ▼
               </span>
             </div>
-          </div>
 
-          {/* Bottom Row: Sort keys and CSV operations */}
-          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-between">
-
-            {/* Sort Buttons */}
-            <div className="flex gap-2">
+            <div className="flex gap-1.5">
               {["date", "amount"].map((key) => (
                 <button
                   key={key}
                   onClick={() => handleDateSort(key)}
-                  className={`flex-1 sm:flex-none px-3 sm:px-4 py-1.5 sm:py-2 
-                  rounded-lg sm:rounded-xl text-xs font-semibold
-                  border transition-all duration-200
-                  ${
+                  className={`h-9 px-3 rounded-xl text-xs font-medium border transition ${
                     sortKey === key
-                      ? "bg-neutral-200 dark:bg-neutral-800 border-neutral-300 dark:border-neutral-700 text-neutral-800 dark:text-white shadow-inner"
-                      : "bg-neutral-50 dark:bg-neutral-950 border-neutral-200 dark:border-neutral-800 text-neutral-500 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-900"
+                      ? "bg-neutral-900 dark:bg-neutral-100 text-white dark:text-neutral-900 border-neutral-900 dark:border-neutral-100 shadow-2xs font-semibold"
+                      : "bg-neutral-50/50 dark:bg-neutral-950/50 border-neutral-200 dark:border-neutral-800 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800"
                   }`}
                 >
-                  {key === "date" ? "Date" : "Amount"}
-                  {key === "date" && sortKey === "date" && (
-                    <span className="ml-1 text-xs">
+                  <span className="capitalize">{key}</span>
+                  {sortKey === key && (
+                    <span className="ml-1">
                       {sortOrder === "asc" ? "↑" : "↓"}
                     </span>
                   )}
@@ -292,21 +248,17 @@ function TransactionTable({ transactions, addTransaction, currency = "₹" }) {
               ))}
             </div>
 
-            {/* CSV Actions */}
-            <div className="hidden sm:flex gap-2">
+            <div className="hidden sm:flex gap-1.5 ml-auto">
               <button
+                type="button"
                 onClick={exportCSV}
-                className="px-4 py-2 rounded-xl text-sm font-semibold
-                bg-neutral-50 dark:bg-neutral-950 border border-neutral-300 dark:border-neutral-800
-                text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-900 transition-all duration-200"
+                className="h-9 px-3 rounded-xl text-xs font-medium bg-neutral-50/50 dark:bg-neutral-950/50 border border-neutral-200 dark:border-neutral-800 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition cursor-pointer"
               >
-                Export CSV
+                Export
               </button>
 
-              <label className="px-4 py-2 rounded-xl text-sm font-semibold
-                bg-neutral-50 dark:bg-neutral-950 border border-neutral-300 dark:border-neutral-800
-                text-neutral-600 dark:text-neutral-300 cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-900 transition-all duration-200">
-                Import CSV
+              <label className="h-9 px-3 rounded-xl text-xs font-medium bg-neutral-50/50 dark:bg-neutral-950/50 border border-neutral-200 dark:border-neutral-800 text-neutral-700 dark:text-neutral-300 cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-800 transition flex items-center">
+                Import
                 <input type="file" accept=".csv" hidden onChange={importCSV} />
               </label>
             </div>
@@ -314,21 +266,19 @@ function TransactionTable({ transactions, addTransaction, currency = "₹" }) {
         </div>
       </div>
 
-      <div
-        className="rounded-2xl bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800/80 shadow-md dark:shadow-[0_20px_50px_rgba(0,0,0,0.35)] relative overflow-hidden"
-      >
+      <div className="rounded-2xl bg-white dark:bg-neutral-900/40 border border-neutral-200/80 dark:border-neutral-800 shadow-2xs overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="min-w-[760px] w-full border-collapse">
-            <thead className="bg-neutral-50 dark:bg-neutral-950">
+          <table className="min-w-[680px] w-full border-collapse">
+            <thead className="bg-neutral-50/60 dark:bg-neutral-950/60">
               {table.getHeaderGroups().map((hg) => (
                 <tr
                   key={hg.id}
-                  className="border-b border-neutral-200 dark:border-neutral-800/85"
+                  className="border-b border-neutral-200/70 dark:border-neutral-800/80"
                 >
                   {hg.headers.map((h) => (
                     <th
                       key={h.id}
-                      className="px-4 py-3 text-left text-[10px] font-bold uppercase tracking-wider text-neutral-500 dark:text-neutral-400"
+                      className="px-4 py-2.5 text-left text-[11px] font-semibold text-neutral-500 dark:text-neutral-400"
                     >
                       {h.column.columnDef.header}
                     </th>
@@ -337,14 +287,14 @@ function TransactionTable({ transactions, addTransaction, currency = "₹" }) {
               ))}
             </thead>
 
-            <tbody>
+            <tbody className="divide-y divide-neutral-100 dark:divide-neutral-800/60">
               {table.getRowModel().rows.map((row) => (
                 <tr
                   key={row.id}
-                  className="border-b border-neutral-100 dark:border-neutral-800/80 hover:bg-neutral-50/80 dark:hover:bg-neutral-950/85 transition-all duration-150"
+                  className="hover:bg-neutral-50/70 dark:hover:bg-neutral-800/40 transition-colors"
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <td key={cell.id} className="px-4 py-3">
+                    <td key={cell.id} className="px-4 py-2.5">
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()
@@ -357,24 +307,24 @@ function TransactionTable({ transactions, addTransaction, currency = "₹" }) {
           </table>
         </div>
 
-        <div className="flex items-center justify-between px-4 py-3 border-t border-neutral-200 dark:border-neutral-800/80 text-xs text-neutral-500 dark:text-neutral-400 font-semibold">
+        <div className="flex items-center justify-between px-4 py-2.5 border-t border-neutral-200/70 dark:border-neutral-800/80 text-xs text-neutral-500 dark:text-neutral-400">
           <span>
             Page {table.getState().pagination.pageIndex + 1} of{" "}
-            {table.getPageCount()}
+            {table.getPageCount() || 1}
           </span>
 
-          <div className="flex gap-2">
+          <div className="flex gap-1.5">
             <button
               disabled={!table.getCanPreviousPage()}
               onClick={() => table.previousPage()}
-              className="px-3 py-1.5 rounded-lg bg-neutral-50 dark:bg-neutral-950 border border-neutral-300 dark:border-neutral-800 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-900 disabled:opacity-40 transition-all duration-200"
+              className="px-2.5 h-7 rounded-lg bg-neutral-50/60 dark:bg-neutral-950/60 border border-neutral-200 dark:border-neutral-800 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 disabled:opacity-30 transition cursor-pointer text-xs"
             >
               Prev
             </button>
             <button
               disabled={!table.getCanNextPage()}
               onClick={() => table.nextPage()}
-              className="px-3 py-1.5 rounded-lg bg-neutral-50 dark:bg-neutral-950 border border-neutral-300 dark:border-neutral-800 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-900 disabled:opacity-40 transition-all duration-200"
+              className="px-2.5 h-7 rounded-lg bg-neutral-50/60 dark:bg-neutral-950/60 border border-neutral-200 dark:border-neutral-800 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 disabled:opacity-30 transition cursor-pointer text-xs"
             >
               Next
             </button>
@@ -384,5 +334,3 @@ function TransactionTable({ transactions, addTransaction, currency = "₹" }) {
     </div>
   );
 }
-
-export default TransactionTable;

@@ -1,17 +1,16 @@
-import React from 'react';
-import { useOutletContext } from 'react-router-dom';
-import TransactionTable from '../../components/TransactionTable';
+import React from "react";
+import { useOutletContext } from "react-router-dom";
+import TransactionTable from "../../components/TransactionTable";
 
 export default function TransactionsView() {
   const { transactions, addTransaction, currency } = useOutletContext();
 
   return (
     <div className="space-y-6 pb-10">
-      <div className="flex justify-between items-end mb-6">
-        <div>
-          <h1 className="text-2xl md:text-3xl font-serif font-bold text-neutral-800 dark:text-white mb-2">Transactions</h1>
-          <p className="text-neutral-500 dark:text-gray-400 text-sm">Review, filter, and import your cash flow.</p>
-        </div>
+      <div className="flex justify-between items-center mb-4">
+        <h1 className="text-xl sm:text-2xl font-semibold tracking-tight text-neutral-900 dark:text-neutral-100">
+          Transactions
+        </h1>
       </div>
 
       <TransactionTable

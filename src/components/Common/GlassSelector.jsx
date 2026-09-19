@@ -1,77 +1,73 @@
-import { Listbox } from "@headlessui/react";
-import { FiChevronDown } from "react-icons/fi";
+import React, { Fragment } from "react";
+import { Listbox, Transition } from "@headlessui/react";
+import { FiChevronDown, FiCheck } from "react-icons/fi";
 
-const accentStyles = {
-  emerald: {
-    ring: "focus:ring-emerald-400/40",
-    selected: "font-semibold text-emerald-300",
-  },
-  rose: {
-    ring: "focus:ring-rose-400/40",
-    selected: "font-semibold text-rose-300",
-  },
-};
+export default function GlassSelect({
+  label,
+  value,
+  onChange,
+  options,
+  accent = "emerald",
+}) {
+  const selectedOption = options.find((o) => o.value === value) || options[0];
 
-function GlassSelect({ label, value, onChange, options, accent = "emerald" }) {
-  const styles = accentStyles[accent] || accentStyles.emerald;
-  const selectedLabel =
-    options.find(o => o.value === value)?.label || "Select category";
+  const accentColors = {
+    emerald: "text-emerald-600 dark:text-emerald-400 font-semibold",
+    rose: "text-rose-600 dark:text-rose-400 font-semibold",
+  };
+
+  const activeAccent = accentColors[accent] || accentColors.emerald;
 
   return (
-    <div className="flex flex-col gap-2">
-      <label className="text-sm text-gray-200">{label}</label>
+    <div className="flex flex-col gap-1.5 w-full text-left">
+      {label && (
+        <label className="text-xs font-medium text-neutral-700 dark:text-neutral-300">
+          {label}
+        </label>
+      )}
 
       <Listbox value={value} onChange={onChange}>
         <div className="relative">
-          <Listbox.Button
-            className={`
-              w-full flex items-center justify-between
-              rounded-xl px-4 py-3
-              bg-white/10 backdrop-blur-xl
-              border border-white/20
-              text-white
-              transition-all duration-200
-              focus:outline-none
-              focus:ring-2 ${styles.ring}
-            `}
-          >
-            <span className={value ? "text-white" : "text-gray-400"}>
-              {selectedLabel}
+          <Listbox.Button className="w-full flex items-center justify-between rounded-xl px-3 h-9 bg-neutral-50/50 dark:bg-neutral-950/50 border border-neutral-200 dark:border-neutral-800 text-neutral-900 dark:text-neutral-100 text-xs focus:outline-none focus:border-neutral-900 dark:focus:border-neutral-100 transition cursor-pointer">
+            <span className="truncate">
+              {selectedOption?.label || "Select category"}
             </span>
-            <FiChevronDown className="text-gray-300 text-lg" />
+            <FiChevronDown className="text-neutral-400 dark:text-neutral-500 text-sm shrink-0 ml-2" />
           </Listbox.Button>
 
-          <Listbox.Options
-            className="
-              absolute z-50 mt-2 w-full
-              rounded-xl
-              bg-neutral-900/95 backdrop-blur-xl
-              border border-white/15
-              shadow-2xl
-              overflow-hidden
-            "
+          <Transition
+            as={Fragment}
+            leave="transition ease-in duration-100"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
           >
-            {options.map(option => (
-              <Listbox.Option
-                key={option.value}
-                value={option.value}
-                className={({ active }) =>
-                  `cursor-pointer px-4 py-3 text-sm transition-colors
-                  ${active ? "bg-white/10 text-white" : "text-gray-300"}`
-                }
-              >
-                {({ selected }) => (
-                  <span className={selected ? styles.selected : ""}>
-                    {option.label}
-                  </span>
-                )}
-              </Listbox.Option>
-            ))}
-          </Listbox.Options>
+            <Listbox.Options className="absolute z-50 mt-1.5 max-h-56 w-full overflow-auto rounded-xl bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 p-1 text-xs shadow-xl focus:outline-none">
+              {options.map((option) => (
+                <Listbox.Option
+                  key={option.value}
+                  value={option.value}
+                  className={({ active, selected }) =>
+                    `relative flex items-center justify-between px-3 py-2 rounded-lg cursor-pointer select-none transition-colors ${
+                      active
+                        ? "bg-neutral-100 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-50"
+                        : "text-neutral-700 dark:text-neutral-300"
+                    } ${selected ? activeAccent : ""}`
+                  }
+                >
+                  {({ selected }) => (
+                    <>
+                      <span className="truncate">{option.label}</span>
+                      {selected && (
+                        <FiCheck className="text-xs shrink-0 ml-2" />
+                      )}
+                    </>
+                  )}
+                </Listbox.Option>
+              ))}
+            </Listbox.Options>
+          </Transition>
         </div>
       </Listbox>
     </div>
   );
 }
-
-export default GlassSelect;

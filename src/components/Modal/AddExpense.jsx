@@ -1,136 +1,154 @@
-import { useState, useEffect, Fragment } from "react";
+import React, { useState, useEffect, Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { FiX } from "react-icons/fi";
 import GlassSelect from "../Common/GlassSelector";
 
-function AddExpense({
+const expenseOptions = [
+  { value: "food", label: "Food & Dining" },
+  { value: "entertainment", label: "Entertainment" },
+  { value: "bills", label: "Bills & Utilities" },
+  { value: "shopping", label: "Shopping" },
+  { value: "transportation", label: "Transportation" },
+  { value: "health", label: "Health & Medical" },
+  { value: "other", label: "Other" },
+];
+
+export default function AddExpense({
   isExpenseModalVisible,
   handleExpenseCancle,
-  onFinish
+  onFinish,
 }) {
   const [name, setName] = useState("");
   const [amount, setAmount] = useState("");
-  const [date, setDate] = useState("");
+  const [date, setDate] = useState(() => new Date().toISOString().split("T")[0]);
   const [tag, setTag] = useState("food");
-
-  const expenseOptions = [
-    { value: "food", label: "Food" },
-    { value: "entertainment", label: "Entertainment" },
-    { value: "bills", label: "Bills" },
-    { value: "shopping", label: "Shopping" },
-    { value: "transportation", label: "Transportation" },
-    { value: "health", label: "Health" },
-    { value: "other", label: "Other" }
-  ];
 
   useEffect(() => {
     if (isExpenseModalVisible) {
       setName("");
       setAmount("");
-      setDate("");
+      setDate(new Date().toISOString().split("T")[0]);
       setTag("food");
     }
   }, [isExpenseModalVisible]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onFinish({ name, amount: Number(amount), date, tag }, "expense");
+    if (!name.trim() || !amount) return;
+    onFinish(
+      {
+        name: name.trim(),
+        amount: parseFloat(amount),
+        date: date || new Date().toISOString().split("T")[0],
+        tag,
+      },
+      "expense"
+    );
   };
 
   return (
     <Transition show={isExpenseModalVisible} as={Fragment}>
-      <Dialog as="div" className="relative z-50" onClose={handleExpenseCancle}>
+      <Dialog
+        as="div"
+        className="relative z-50"
+        onClose={handleExpenseCancle}
+      >
         <Transition.Child
           as={Fragment}
-          enter="ease-out duration-300"
+          enter="ease-out duration-200"
           enterFrom="opacity-0"
           enterTo="opacity-100"
-          leave="ease-in duration-200"
+          leave="ease-in duration-150"
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm" />
+          <div className="fixed inset-0 bg-black/40 dark:bg-black/70 backdrop-blur-xs" />
         </Transition.Child>
 
         <div className="fixed inset-0 overflow-y-auto">
           <div className="flex min-h-full items-center justify-center p-4 text-center">
             <Transition.Child
               as={Fragment}
-              enter="ease-out duration-300"
+              enter="ease-out duration-200"
               enterFrom="opacity-0 scale-95"
               enterTo="opacity-100 scale-100"
-              leave="ease-in duration-200"
+              leave="ease-in duration-150"
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="w-full max-w-[440px] transform overflow-visible rounded-[24px] bg-white dark:bg-[#141414e6] backdrop-blur-[28px] border border-neutral-200 dark:border-white/20 shadow-[0_30px_80px_rgba(0,0,0,0.15)] dark:shadow-[0_30px_80px_rgba(0,0,0,0.65)] p-6 text-left align-middle transition-all">
-                <Dialog.Title as="div" className="flex justify-between items-start mb-6">
-                  <div className="flex flex-col gap-1">
-                    <h2 className="text-xl font-semibold text-neutral-800 dark:text-white">Add Expense</h2>
-                    <p className="text-sm text-neutral-500 dark:text-gray-300">Track where your money goes</p>
-                  </div>
-                  <button type="button" onClick={handleExpenseCancle} className="text-neutral-500 dark:text-gray-400 hover:text-neutral-800 dark:hover:text-white hover:bg-neutral-100 dark:hover:bg-white/10 rounded-full transition-all duration-150 p-1">
-                    <FiX size={24} />
+              <Dialog.Panel className="w-full max-w-sm rounded-2xl bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 p-6 text-left shadow-2xl transition-all">
+                <div className="flex items-center justify-between mb-5">
+                  <Dialog.Title className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
+                    Add Expense
+                  </Dialog.Title>
+                  <button
+                    type="button"
+                    onClick={handleExpenseCancle}
+                    className="p-1 rounded-lg text-neutral-400 hover:text-neutral-900 dark:hover:text-white hover:bg-neutral-100 dark:hover:bg-neutral-800 transition cursor-pointer"
+                    aria-label="Close"
+                  >
+                    <FiX className="text-base" />
                   </button>
-                </Dialog.Title>
+                </div>
 
                 <form onSubmit={handleSubmit} className="space-y-4">
-                  {/* Name */}
-                  <div className="flex flex-col gap-2">
-                    <label className="text-neutral-600 dark:text-gray-200 text-sm">Name</label>
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-medium text-neutral-700 dark:text-neutral-300">
+                      Expense Name
+                    </label>
                     <input
                       type="text"
                       required
+                      placeholder="Groceries, Dinner, etc."
                       value={name}
                       onChange={(e) => setName(e.target.value)}
-                      placeholder="Groceries"
-                      className="bg-white dark:bg-white/10 border border-neutral-300 dark:border-white/20 text-neutral-800 dark:text-white placeholder:text-neutral-400 dark:placeholder:text-gray-400 rounded-xl px-4 py-2.5 focus:outline-none focus:border-rose-500/60 dark:focus:border-rose-400/60 focus:shadow-[0_0_0_3px_rgba(244,63,94,0.15)] dark:focus:shadow-[0_0_0_3px_rgba(244,63,94,0.25)] transition-all"
+                      className="w-full h-9 px-3 rounded-xl border border-neutral-200 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-950/50 text-xs text-neutral-900 dark:text-neutral-100 placeholder-neutral-400 dark:placeholder-neutral-500 focus:outline-none focus:border-rose-500 transition"
                     />
                   </div>
 
-                  {/* Amount */}
-                  <div className="flex flex-col gap-2">
-                    <label className="text-neutral-600 dark:text-gray-200 text-sm">Amount</label>
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-medium text-neutral-700 dark:text-neutral-300">
+                      Amount
+                    </label>
                     <input
                       type="number"
+                      step="any"
+                      min="0"
                       required
+                      placeholder="0.00"
                       value={amount}
                       onChange={(e) => setAmount(e.target.value)}
-                      placeholder="1200"
-                      className="bg-white dark:bg-white/10 border border-neutral-300 dark:border-white/20 text-neutral-800 dark:text-white placeholder:text-neutral-400 dark:placeholder:text-gray-400 rounded-xl px-4 py-2.5 focus:outline-none focus:border-rose-500/60 dark:focus:border-rose-400/60 transition-all"
+                      className="w-full h-9 px-3 rounded-xl border border-neutral-200 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-950/50 text-xs text-neutral-900 dark:text-neutral-100 placeholder-neutral-400 dark:placeholder-neutral-500 focus:outline-none focus:border-rose-500 transition"
                     />
                   </div>
 
-                  {/* Date */}
-                  <div className="flex flex-col gap-2">
-                    <label className="text-neutral-600 dark:text-gray-200 text-sm">Date</label>
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-medium text-neutral-700 dark:text-neutral-300">
+                      Date
+                    </label>
                     <input
                       type="date"
                       required
                       value={date}
                       onChange={(e) => setDate(e.target.value)}
-                      className="bg-white dark:bg-white/10 border border-neutral-300 dark:border-white/20 text-neutral-800 dark:text-white rounded-xl px-4 py-2.5 focus:outline-none focus:border-rose-500/60 dark:focus:border-rose-400/60 transition-all dark:[color-scheme:dark]"
+                      className="w-full h-9 px-3 rounded-xl border border-neutral-200 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-950/50 text-xs text-neutral-900 dark:text-neutral-100 focus:outline-none focus:border-rose-500 transition dark:[color-scheme:dark]"
                     />
                   </div>
 
-                  {/* Tag */}
-                  <div className="relative z-[100]">
-                    <GlassSelect 
-                      label="Category"
-                      value={tag}
-                      onChange={setTag}
-                      options={expenseOptions}
-                      accent="rose"
-                    />
-                  </div>
+                  <GlassSelect
+                    label="Category"
+                    value={tag}
+                    onChange={setTag}
+                    options={expenseOptions}
+                    accent="rose"
+                  />
 
-                  {/* Submit */}
                   <div className="pt-2">
                     <button
                       type="submit"
-                      className="w-full rounded-xl py-3 font-semibold bg-rose-600 text-white dark:bg-rose-500/25 dark:text-rose-200 border border-rose-600/20 dark:border-rose-400/30 backdrop-blur-xl transition-all duration-300 hover:bg-rose-700 dark:hover:bg-rose-500/35 hover:shadow-[0_12px_45px_rgba(244,63,94,0.15)] dark:hover:shadow-[0_12px_45px_rgba(244,63,94,0.35)] hover:scale-[1.02]"
+                      className="w-full h-9 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-xs font-medium transition shadow-xs active:scale-[0.98] cursor-pointer"
                     >
-                      Add Expense
+                      Save Expense
                     </button>
                   </div>
                 </form>
@@ -142,5 +160,3 @@ function AddExpense({
     </Transition>
   );
 }
-
-export default AddExpense;

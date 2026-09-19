@@ -1,234 +1,221 @@
-import Button from './Common/Button'
-import Input from './Common/Input'
-import { useState } from 'react'
-import toast from 'react-hot-toast';
-import { 
-  createUserWithEmailAndPassword, 
-  signInWithEmailAndPassword , 
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
   signInWithPopup,
 } from "firebase/auth";
-import { auth, db, provider } from '../firebase'
-import { doc, getDoc, setDoc } from "firebase/firestore"; 
-import { useNavigate } from 'react-router-dom';
+import { doc, getDoc, setDoc } from "firebase/firestore";
 import { FcGoogle } from "react-icons/fc";
-function SignupSignin({ initialLogin = false }) {
+import toast from "react-hot-toast";
 
+import { auth, db, provider } from "../firebase";
+import Button from "./Common/Button";
+import Input from "./Common/Input";
+
+export default function SignupSignin({ initialLogin = false }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [loginForm , setLoginForm] = useState(initialLogin);
+  const [loginForm, setLoginForm] = useState(initialLogin);
   const navigate = useNavigate();
+
+  async function createDoc(user) {
+    if (!user) return;
+    const userRef = doc(db, "users", user.uid);
+    const userSnap = await getDoc(userRef);
+
+    if (!userSnap.exists()) {
+      try {
+        await setDoc(userRef, {
+          name: user.displayName || name || "User",
+          email: user.email,
+          photoURL: user.photoURL || "",
+          createdAt: new Date(),
+        });
+      } catch (error) {
+        console.error("Error creating user doc:", error);
+      }
+    }
+  }
 
   async function signupWithEmail(e) {
     e.preventDefault();
+    if (!name || !email || !password || !confirmPassword) {
+      toast.error("Please fill in all fields");
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      toast.error("Passwords do not match");
+      return;
+    }
+
     setLoading(true);
-
-      try {
-        if (!name || !email || !password || !confirmPassword) {
-          toast.error("Please fill all the fields");
-          return;
-        }
-
-        if (password !== confirmPassword) {
-          toast.error("Passwords do not match");
-          return;
-        }
-        toast.loading("Signing up...")
-
-        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-        const user = userCredential.user;
-
-        toast.dismiss(); 
-        toast.success("Signed up successfully");
-
-        setName("");
-        setEmail("");
-        setPassword("");
-        setConfirmPassword("");
-
-        await createDoc(user)
-
-        navigate("/app")
-
-      } catch (error) {
-        toast.dismiss();
-        toast.error(error.message);
-      } finally {
-        setLoading(false);
-      }
-  }
-
-  async function loginUsingEmail(e){
-    e.preventDefault();
-    setLoading(true);
+    toast.loading("Creating account...");
 
     try {
-      if(!email || !password){
-        toast.error("Please fill all the fields");
-        return;
-      }
-
-      toast.loading("Logging in...")
-      await signInWithEmailAndPassword(auth, email, password)
-
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      await createDoc(userCredential.user);
       toast.dismiss();
-      toast.success("Logged in successfully");
-
+      toast.success("Account created successfully!");
+      setName("");
       setEmail("");
       setPassword("");
-
-      navigate("/app")
-        // ...
+      setConfirmPassword("");
+      navigate("/app");
     } catch (error) {
       toast.dismiss();
-      toast.error("Email or password is incorrect", error);
+      toast.error(error.message || "Failed to sign up");
     } finally {
       setLoading(false);
     }
   }
 
-  async function createDoc(user){
-    // creating doc for user
+  async function loginUsingEmail(e) {
+    e.preventDefault();
+    if (!email || !password) {
+      toast.error("Please fill in email and password");
+      return;
+    }
+
     setLoading(true);
-    if(!user) return;
+    toast.loading("Logging in...");
 
-    const userRef = doc(db, "users", user.uid);
-    const userData = await getDoc(userRef);
-
-    if(!userData.exists()){
-      try {
-        await setDoc(doc(db, "users", user.uid), {
-          name: user.displayName ? user.displayName: name,
-          email: user.email,
-          photoURL: user.photoURL ? user.photoURL  : "",
-          createdAt: new Date(),  
-        });
-        toast.success("Doc created!");
-        setLoading(false);
-      } catch (error) {
-        toast.error(error.message);
-        setLoading(false);
-      }
-    } else{
-      toast.error("Doc already exists!");
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      toast.dismiss();
+      toast.success("Logged in successfully!");
+      setEmail("");
+      setPassword("");
+      navigate("/app");
+    } catch {
+      toast.dismiss();
+      toast.error("Email or password is incorrect");
+    } finally {
       setLoading(false);
     }
-    
   }
-  
+
   async function googleAuth(e) {
     e.preventDefault();
     setLoading(true);
+    toast.loading("Authenticating with Google...");
+
     try {
-      toast.loading(" GoogleAuthenticating...");
-
       const result = await signInWithPopup(auth, provider);
-      const user = result.user;
-      await createDoc(user);
-
+      await createDoc(result.user);
       toast.dismiss();
-      toast.success("User Authenticated Successfully!");
-
+      toast.success("Authenticated successfully!");
       navigate("/app");
-
     } catch (error) {
       toast.dismiss();
-      toast.error(error.message);
-      
-    } finally{
+      toast.error(error.message || "Google sign-in failed");
+    } finally {
       setLoading(false);
     }
   }
 
   return (
-    <>
+    <div className="w-full text-neutral-900 dark:text-neutral-50">
+      {/* Form Header */}
+      <div className="text-center space-y-1 mb-4">
+        <h2 className="text-xl font-bold tracking-tight text-neutral-900 dark:text-white">
+          {loginForm ? "Welcome back" : "Create an account"}
+        </h2>
+        <p className="text-xs text-neutral-500 dark:text-neutral-400">
+          {loginForm
+            ? "Login to your Spendzy account"
+            : "Take control of your money with Spendzy"}
+        </p>
+      </div>
+
       {loginForm ? (
-        <div className="w-full text-neutral-800 dark:text-white">
-          <h2 className="text-lg sm:text-xl font-semibold text-center mb-5">
-            Login on <span className="text-emerald-600 dark:text-emerald-400">Spendzy</span>
-          </h2>
+        /* ──────────── LOGIN FORM ──────────── */
+        <form onSubmit={loginUsingEmail} className="space-y-2.5">
+          <Input
+            type="email"
+            label="Email"
+            placeholder="name@example.com"
+            state={email}
+            setState={setEmail}
+          />
 
-          <form className="space-y-4">
-            <Input
-              type="email"
-              label="Email"
-              placeholder="johndoe911@gmail.com"
-              state={email}
-              setState={setEmail}
-            />
+          <Input
+            type="password"
+            label="Password"
+            placeholder="••••••••"
+            state={password}
+            setState={setPassword}
+          />
 
-            <Input
-              type="password"
-              label="Password"
-              placeholder="Example@123"
-              state={password}
-              setState={setPassword}
-            />
-
+          <div className="pt-1">
             <Button
+              type="submit"
               onClick={loginUsingEmail}
               disabled={loading}
-              text={loading ? "Loading..." : "Login"}
+              text={loading ? "Logging in..." : "Login"}
             />
+          </div>
 
-            <p className="text-center text-xs text-neutral-500 dark:text-gray-400">or</p>
+          <div className="flex items-center gap-3 py-0.5">
+            <span className="h-px flex-1 bg-linear-to-r from-transparent to-neutral-300 dark:to-white/15" />
+            <span className="text-[11px] font-medium text-neutral-400 dark:text-neutral-500">
+              or
+            </span>
+            <span className="h-px flex-1 bg-linear-to-l from-transparent to-neutral-300 dark:to-white/15" />
+          </div>
 
-            <Button
-              onClick={googleAuth}
-              google
+          <Button
+            type="button"
+            onClick={googleAuth}
+            disabled={loading}
+            google
+            text={
+              <div className="flex items-center justify-center gap-2 text-xs sm:text-sm font-semibold">
+                <FcGoogle size={18} />
+                <span>Continue with Google</span>
+              </div>
+            }
+          />
+
+          <p className="text-center text-xs text-neutral-500 dark:text-neutral-400 pt-1">
+            Don’t have an account?
+            <button
               type="button"
-              text={
-                loading ? (
-                  "Loading..."
-                ) : (
-                  <div className="flex items-center justify-center gap-2 text-sm">
-                    <FcGoogle size={18} />
-                    <span>Login with Google</span>
-                  </div>
-                )
-              }
-            />
-
-            <p className="text-center text-xs text-neutral-500 dark:text-gray-400">
-              Don’t have an account?
-              <span
-                onClick={() => setLoginForm(false)}
-                className="ml-1 text-emerald-600 dark:text-emerald-400 cursor-pointer hover:underline"
-              >
-                Signup
-              </span>
-            </p>
-          </form>
-        </div>
+              onClick={() => setLoginForm(false)}
+              className="ml-1 text-emerald-600 dark:text-emerald-400 font-semibold hover:underline cursor-pointer"
+            >
+              Sign up
+            </button>
+          </p>
+        </form>
       ) : (
-        <div className="w-full text-neutral-800 dark:text-white">
-          <h2 className="text-lg sm:text-xl font-semibold text-center mb-5">
-            Sign up on <span className="text-emerald-600 dark:text-emerald-400">Spendzy</span>
-          </h2>
+        /* ──────────── SIGNUP FORM ──────────── */
+        <form onSubmit={signupWithEmail} className="space-y-2.5">
+          <Input
+            type="text"
+            label="Full Name"
+            placeholder="John Doe"
+            state={name}
+            setState={setName}
+          />
 
-          <form className="space-y-4">
-            <Input
-              type="text"
-              label="Full Name"
-              placeholder="John Doe"
-              state={name}
-              setState={setName}
-            />
+          <Input
+            type="email"
+            label="Email"
+            placeholder="name@example.com"
+            state={email}
+            setState={setEmail}
+          />
 
-            <Input
-              type="email"
-              label="Email"
-              placeholder="johndoe911@gmail.com"
-              state={email}
-              setState={setEmail}
-            />
-
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
             <Input
               type="password"
               label="Password"
-              placeholder="Example@123"
+              placeholder="••••••••"
               state={password}
               setState={setPassword}
             />
@@ -236,52 +223,54 @@ function SignupSignin({ initialLogin = false }) {
             <Input
               type="password"
               label="Confirm Password"
-              placeholder="Example@123"
+              placeholder="••••••••"
               state={confirmPassword}
               setState={setConfirmPassword}
             />
+          </div>
 
+          <div className="pt-1">
             <Button
+              type="submit"
               onClick={signupWithEmail}
               disabled={loading}
-              text={loading ? "Loading..." : "Signup"}
-              type="submit"
+              text={loading ? "Creating account..." : "Sign up"}
             />
+          </div>
 
-            <p className="text-center text-xs text-neutral-500 dark:text-gray-400">or</p>
+          <div className="flex items-center gap-3 py-0.5">
+            <span className="h-px flex-1 bg-linear-to-r from-transparent to-neutral-300 dark:to-white/15" />
+            <span className="text-[11px] font-medium text-neutral-400 dark:text-neutral-500">
+              or
+            </span>
+            <span className="h-px flex-1 bg-linear-to-l from-transparent to-neutral-300 dark:to-white/15" />
+          </div>
 
-            <Button
-              onClick={googleAuth}
-              google
+          <Button
+            type="button"
+            onClick={googleAuth}
+            disabled={loading}
+            google
+            text={
+              <div className="flex items-center justify-center gap-2 text-xs sm:text-sm font-semibold">
+                <FcGoogle size={18} />
+                <span>Sign up with Google</span>
+              </div>
+            }
+          />
+
+          <p className="text-center text-xs text-neutral-500 dark:text-neutral-400 pt-1">
+            Already have an account?
+            <button
               type="button"
-              text={
-                loading ? (
-                  "Loading..."
-                ) : (
-                  <div className="flex items-center justify-center gap-2 text-sm">
-                    <FcGoogle size={18} />
-                    <span>Signup with Google</span>
-                  </div>
-                )
-              }
-            />
-
-            <p className="text-center text-xs text-neutral-500 dark:text-gray-400">
-              Already have an account?
-              <span
-                onClick={() => setLoginForm(true)}
-                className="ml-1 text-emerald-600 dark:text-emerald-400 cursor-pointer hover:underline"
-              >
-                Login
-              </span>
-            </p>
-          </form>
-        </div>
+              onClick={() => setLoginForm(true)}
+              className="ml-1 text-emerald-600 dark:text-emerald-400 font-semibold hover:underline cursor-pointer"
+            >
+              Login
+            </button>
+          </p>
+        </form>
       )}
-    </>
+    </div>
   );
-
-
 }
-
-export default SignupSignin

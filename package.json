@@ -12,6 +12,7 @@
   "dependencies": {
     "@headlessui/react": "^2.2.10",
     "@tanstack/react-table": "^8.21.3",
+    "@vercel/analytics": "^2.0.1",
     "firebase": "^11.10.0",
     "framer-motion": "^12.40.0",
     "papaparse": "^5.5.4",
