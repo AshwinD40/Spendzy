@@ -1,83 +1,48 @@
-# 💰 Spendzy – Next-Generation Personal Finance Tracker
+# Spendzy
 
-Spendzy is a premium, high-performance personal finance manager designed with a stunning glassmorphic UI, responsive layouts, and seamless transitions. It empowers users to monitor income, define custom monthly budgets, and analyze spending patterns using interactive visualizations, instant quick-log shortcuts, and robust CSV sheet handling.
+A minimal, fast personal finance tracker built with React 19, Tailwind CSS v4, and Firebase.
 
----
+## Features
 
-## ✨ Features
+- **Unboxed Analytics**: Live cash flow, income vs. expense tracking, and savings rate.
+- **Smart Budgets**: Category limits, status filters, and dynamic daily safe-to-spend allowance.
+- **Command Center (`Ctrl + K` / `Cmd + K`)**: Instant keyboard transaction logging.
+- **Ledger & CSV**: Sort, search, filter, and import/export transactions.
+- **Dark & Light Mode**: Clean, ambient theme support with zero clutter.
+- **Live Sync**: Firebase Auth & Firestore with Vercel Analytics integration.
 
-- ⚡ **Magic Command Center (`Ctrl + K` / `Cmd + K`)**  
-  Quickly log transactions using a shorthand parsing engine. Typing `"Sushi 450"` or `"Salary 80000"` instantly categorizes, maps transaction types, and records the entry.
-- 📊 **Dynamic Data Visualizations**  
-  Real-time area charts and category breakdowns using **Recharts** to visualize cash flow trends, comparison ratios, and spending allocations.
-- 🎯 **Smart Budget Management**  
-  Set monthly spending caps for individual categories (Food, Travel, Bills, etc.). Features visual progress indicators, warning thresholds, and instant over-limit notifications.
-- 📂 **Advanced Transaction Ledger**  
-  Paginated transaction sheets powered by **TanStack Table** with full-text search, type filtering, sorting by date/amount, and instant CSV imports/exports via **PapaParse**.
-- 🌓 **Ambient Dark/Light Mode**  
-  A polished, system-aware dark mode theme featuring glassmorphism, glowing gradient backgrounds, and premium micro-animations powered by **Framer Motion**.
-- 🔒 **Secure Firebase Integration**  
-  Secure authentication protocols and real-time Firestore database sync for persistent client settings, custom currencies, budgets, and transactions.
+## Tech Stack
 
----
+- **Frontend**: React 19, Vite, Tailwind CSS v4, Framer Motion
+- **Data & Auth**: Firebase 11 (Auth & Firestore)
+- **Charts & Tables**: Recharts, TanStack Table
+- **Analytics & Hosting**: Vercel Analytics
 
-## 🛠️ Tech Stack
+## Quick Start
 
-- **Framework:** React 19 (Functional Components, Hooks)
-- **Styling:** Tailwind CSS v4 (with `@tailwindcss/vite`)
-- **Routing:** React Router v7
-- **Database & Auth:** Firebase v11 (Firestore & Authentication)
-- **Tables & Grid:** TanStack Table v8
-- **Charts:** Recharts v3
-- **Animations:** Framer Motion v12
-- **CSV Engine:** PapaParse v5
-- **Icons & Alerts:** React Icons, React Hot Toast
-
----
-
-## ⚙️ Installation & Setup
-
-### 1. Clone the Repository
 ```bash
+# 1. Clone & install
 git clone https://github.com/AshwinD40/Spendzy.git
 cd Spendzy
-```
-
-### 2. Install Dependencies
-Ensure you have Node.js installed (v18+ recommended):
-```bash
 npm install
-```
 
-### 3. Setup Environment Variables
-Create a `.env` file in the root directory and add your Firebase API configuration details:
-```env
+# 2. Environment setup (.env)
 VITE_FIREBASE_API_KEY=your_firebase_api_key
-```
-*(The App also automatically infers project details, storage, and database paths based on this config).*
 
-### 4. Run the Development Server
-```bash
+# 3. Run development server
 npm run dev
 ```
-Open your browser and navigate to `http://localhost:5173`.
 
-### 5. Production Build
-To create an optimized, minified production build:
+Build for production:
 ```bash
 npm run build
 ```
 
----
+## Author
 
-## 🙋‍♂️ Author
+**Ashwin Chaudhary**  
+GitHub: [@AshwinD40](https://github.com/AshwinD40) · LinkedIn: [Ashwin Chaudhary](https://www.linkedin.com/in/ashwin40/)
 
-**Ashwin Chaudhary**
-- GitHub: [@AshwinD40](https://github.com/AshwinD40)
-- LinkedIn: [Ashwin Chaudhary](https://www.linkedin.com/in/ashwin40/)
+## License
 
----
-
-## 📄 License
-
-This project is open-source and available under the [MIT License](LICENSE).
+MIT
